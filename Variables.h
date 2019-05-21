@@ -1,0 +1,13 @@
+//
+// Created by jakub on 21.05.19.
+//
+
+#ifndef ARTILLERY_VARIABLES_H
+#define ARTILLERY_VARIABLES_H
+
+unsigned int WINDOW_WIDTH = 800;
+unsigned int WINDOW_HEIGHT = 600;
+int TERRAIN_POINT_COUNT = 4;
+float TERRAIN_POINT_COEFF = WINDOW_WIDTH / TERRAIN_POINT_COUNT;
+
+#endif //ARTILLERY_VARIABLES_H
