@@ -15,7 +15,7 @@ int main() {
     terrain.setOutlineColor(sf::Color::Black);
     terrain.setOutlineThickness(-1);
 
-    for (int i=0; i<=TERRAIN_POINT_COUNT; i++) {
+    for (size_t i=0; i<=TERRAIN_POINT_COUNT; i++) {
         terrain.setPoint(i, sf::Vector2f(i*TERRAIN_POINT_COEFF, WINDOW_HEIGHT-terrain_points[i]));
     }
 
