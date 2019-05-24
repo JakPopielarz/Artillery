@@ -5,27 +5,25 @@
 #ifndef JIMPPROJEKT_MISSILE_H
 #define JIMPPROJEKT_MISSILE_H
 
+#include <SFML/Graphics.hpp>
 #include <vector>
+#include <math.h>
+using namespace std;
 
-class Missile { //potem mozna przerobic na klase abstrakcyjna
+class Missile {
 private:
-    float starting_x, starting_y; //mozna zamienic tą klase na zaprzyjaźnioną z cannon i od niej pobierać punkt startowy
+    float current_x, current_y;
     float velocity_x, velocity_y;
-    //trzeba dodac też wiatr (jako zmienna globalna/ zmienna jakiejs klasy i wtedy jako klasa zaprzyjaziona)
-    //jezeli chcemy zrobic w klasie pocisku metody zmieniające pozycje i prędkosc po danym korku czasu
-    //float wind_x = 0;
-    //float wind_y = 0;
-    float radius; //dodatkowe
-    float power; //dodatkowe
+    float radius; //also can be used as a power of destruction ;)
 
 public:
-    Missile(float starting_x, float starting_y, float velocity_x, float velocity_y);
-    std::vector<float> get_current_position();
-    std::vector<float> get_current_velocity();
-    void set_position(float px, float py);
-    void set_velocity(float vx, float vy);
+    Missile(float starting_x, float starting_y, float velocity, float alpha, float wind_x, float wind_y);
+    vector<float> get_current_position();
+    vector<float> get_current_velocity();
+    void set_position(float position_x, float position_y);
+    void set_velocity(float velocity_x, float velocity_y);
+    sf::CircleShape shape(); //read the implementation first ;)
     ~Missile()= default;
-
 
 };
 
