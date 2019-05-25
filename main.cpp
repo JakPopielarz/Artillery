@@ -9,6 +9,8 @@ using namespace std;
 int main() {
     float terrain_points[] = {0.f, 100.f, 200.f, 300.f, 400.f};
 
+    Cannon cannon(100, 100, sf::Color::Magenta);
+
     sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Artillery");
     sf::ConvexShape terrain(6);
     terrain.setFillColor(sf::Color(35, 147, 67));
@@ -33,6 +35,7 @@ int main() {
 
         window.clear(sf::Color(139, 194, 239));
         window.draw(terrain);
+        cannon.draw(window);
         window.display();
     }
 
