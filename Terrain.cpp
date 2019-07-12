@@ -1,17 +1,32 @@
-#include<iostream>
-
+#include <iostream>
 #include "Terrain.h"
 
-Terrain::Terrain(float radius, float power): _radius(radius), _power(power){
-  int x=0;    //numer x, dla którego liczymy y
-  for ( auto it = array_of_y_coordinates.begin(); it != array_of_y_coordinates.end(); ++it){      //iteracja po kolejnych elementach tablicy ze współrz. y
-    int result = 0;                                 // to bedzie wynik koncowy dla wspolrzednej y
-    for(int i = 0; i< v.size(); i += 2){
-         result += v[i]*pow(x,v[i+1]);
+
+unsigned int WIDTH = 800;
+unsigned int HEIGHT = 600;
+size_t POINT_COUNT = 4;
+float POINT_COEFF = float(WIDTH) / float(POINT_COUNT);
+
+Terrain::Terrain(size_t number_of_points, float *points) {
+    terrain.setPointCount(number_of_points + 2);
+    terrain.setFillColor(sf::Color(35, 147, 67));
+    terrain.setOutlineColor(sf::Color::Black);
+    terrain.setOutlineThickness(-1);
+
+    setPoints(points);
+}
+
+void Terrain::setPoints(float *points) {
+    for (size_t i=0; i<terrain.getPointCount()-2; i++) {
+        terrain.setPoint(i, sf::Vector2f(i*POINT_COEFF, HEIGHT-points[i]));
     }
-            
-    x++;            //przechodzenie do kolejnego x
-    *it = result;   //w array_of_y_coordinates zapisujemy wynik funkcji dla x
-   }
-}   
-    
+
+    terrain.setPoint(terrain.getPointCount()-2, sf::Vector2f(WIDTH, HEIGHT));
+    terrain.setPoint(terrain.getPointCount()-1, sf::Vector2f(0, HEIGHT));
+//    for (size_t i=0; i<terrain.getPointCount(); i++)
+//        std::cout << terrain.getPoint(i).x <<", " << terrain.getPoint(i).y << std::endl;
+}
+
+void Terrain::draw(sf::RenderWindow& window) {
+    window.draw(terrain);
+}
