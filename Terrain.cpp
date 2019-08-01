@@ -12,7 +12,7 @@ float get_y(int i, int mod, float phase) {
 }
 
 sf::VertexArray generate_vertices(float density, sf::Color color) {
-    int number = int(WIDTH*density +1);
+    auto number = size_t(WIDTH*density +1);
     sf::VertexArray vertices(sf::LineStrip, number);
 
     int mod = rand() % (150 - 80 + 1) + 80;
@@ -55,8 +55,8 @@ void Terrain::create_texture() {
 
     sf::Image image;
     image.create(WIDTH, HEIGHT, sf::Color(0,0,0,0));
-    for (int i=0; i<HEIGHT; i++){
-        for (int j=0; j<WIDTH; j++) {
+    for (unsigned int i=0; i<HEIGHT; i++){
+        for (unsigned int j=0; j<WIDTH; j++) {
             if (i > terrain[j].position.y)
                 image.setPixel(j, i, color);
         }
