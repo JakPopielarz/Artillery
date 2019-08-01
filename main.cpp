@@ -26,10 +26,11 @@ vector<float> values(string function) {
     vector<string> f_split_str = split(function);
     size_t x_pos;
     string x_str_exp;
-    float x_exp=0, coeff=0, value=0;
+    float x_exp=0, coeff=0, value=0, x=0;
     vector<float> values = vector<float>();
 
-    for (int x=0; x<800; x+=2) {
+    for (int k=0; k<800; k+=2) {
+        x = float(k)/100.0f;
         for (string i: f_split_str) {
             x_pos = i.find("x");
 
@@ -42,7 +43,7 @@ vector<float> values(string function) {
             }
 
             coeff = stof(i);
-            value += coeff * float(pow(x, x_exp));
+            value += coeff * float(pow(x, x_exp)) + 1;
         }
         values.push_back(value);
     }
@@ -50,12 +51,26 @@ vector<float> values(string function) {
 }
 
 int main() {
-    string function = "0.3x^4 +0.2x^3 -0.3x^2 +0.2";
-    vector<float> terrain_points = values(function);
+    srand(time(NULL));
 
-    sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Artillery");
+    vector<float> terrain_points = vector<float>(800);
 
-    Terrain terrain = Terrain(TERRAIN_POINT_COUNT, terrain_points);
+    terrain_points[0] = 70;
+    for(int i=1; i<800; i++) {
+        int offset = (rand() % (5 - 1 + 1) + 1) * (rand() % (1 + 1 + 1) - 1);
+        terrain_points[i] = terrain_points[i - 1] + offset;
+        if (terrain_points[i] > WINDOW_HEIGHT)
+            terrain_points[i] = WINDOW_HEIGHT - 10;
+        if (terrain_points[i] < 0)
+            terrain_points[i] = 10;
+    }
+
+
+    sf::ContextSettings settings;
+    settings.antialiasingLevel = 8;
+    sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Artillery", sf::Style::Default, settings);
+
+    Terrain terrain = Terrain(terrain_points);
 
     while (window.isOpen())
     {
