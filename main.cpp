@@ -53,24 +53,12 @@ vector<float> values(string function) {
 int main() {
     srand(time(NULL));
 
-    vector<float> terrain_points = vector<float>(800);
-
-    terrain_points[0] = 70;
-    for(int i=1; i<800; i++) {
-        int offset = (rand() % (5 - 1 + 1) + 1) * (rand() % (1 + 1 + 1) - 1);
-        terrain_points[i] = terrain_points[i - 1] + offset;
-        if (terrain_points[i] > WINDOW_HEIGHT)
-            terrain_points[i] = WINDOW_HEIGHT - 10;
-        if (terrain_points[i] < 0)
-            terrain_points[i] = 10;
-    }
-
 
     sf::ContextSettings settings;
     settings.antialiasingLevel = 8;
     sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Artillery", sf::Style::Default, settings);
 
-    Terrain terrain = Terrain(terrain_points);
+    Terrain terrain = Terrain();
 
     while (window.isOpen())
     {

@@ -6,22 +6,26 @@
 unsigned int WIDTH = 800;
 unsigned int HEIGHT = 600;
 
-Terrain::Terrain(vector<float> points) {
-    terrain = sf::ConvexShape(points.size()+3);
-    setPoints(points);
-    terrain.setFillColor(sf::Color::Transparent);
-    terrain.setOutlineColor(sf::Color::Red);
-    terrain.setOutlineThickness(-1);
+Terrain::Terrain() {
+    sf::VertexArray vertices(sf::LineStrip, 800);
+
+    vertices[0].position = sf::Vector2f(0, HEIGHT-70);
+    vertices[0].color = sf::Color::Red;
+    for(int i=1; i<800; i++) {
+        int offset = (rand() % (5 - 1 + 1) + 1) * (rand() % (1 + 1 + 1) - 1);
+        vertices[i].position = sf::Vector2f(i, vertices[i - 1].position.y + offset);
+        vertices[i].color = sf::Color::Red;
+        if (vertices[i].position.y > HEIGHT)
+            vertices[i].position.y = HEIGHT - 10;
+        if (vertices[i].position.y < 0)
+            vertices[i].position.y = 10;
+    }
+    
+    setVertices(vertices);
 }
 
-void Terrain::setPoints(vector<float>& points) {
-    for (size_t i=0; i<terrain.getPointCount()-3; i++) {
-        terrain.setPoint(i, sf::Vector2f(i, HEIGHT-points[i]));
-    }
-
-    terrain.setPoint(terrain.getPointCount()-3, sf::Vector2f(WIDTH, terrain.getPoint(terrain.getPointCount()-4).y));
-    terrain.setPoint(terrain.getPointCount()-2, sf::Vector2f(WIDTH, HEIGHT));
-    terrain.setPoint(terrain.getPointCount()-1, sf::Vector2f(0, HEIGHT));
+void Terrain::setVertices(sf::VertexArray &vertices) {
+    terrain = vertices;
 }
 
 void Terrain::draw(sf::RenderWindow& window) {
