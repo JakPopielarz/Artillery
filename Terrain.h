@@ -9,7 +9,6 @@ private:
     sf::Texture texture;
     sf::Sprite sprite;
     sf::Color color;
-    bool destroyed = false;
 
     void create_texture();
     void create_sprite();

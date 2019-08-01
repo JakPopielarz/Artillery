@@ -70,7 +70,7 @@ void Terrain::create_sprite() {
 }
 
 void Terrain::destroy(sf::Vector2f location, float radius) {
-    for (int i=int(location.x-radius); i<=location.x+radius; i++) {
+    for (int i=int(fmax(location.x-radius, 0)); i<=fmin(location.x+radius, WIDTH); i++) {
         float new_y = terrain[i].position.y + location.y - terrain[i].position.y + sqrt(radius * radius - (i - location.x) * (i - location.x));
         terrain[i].position.y = fmax(new_y, terrain[i].position.y);
     }
