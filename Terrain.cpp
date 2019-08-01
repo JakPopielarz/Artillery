@@ -33,10 +33,11 @@ sf::VertexArray generate_vertices(float density, sf::Color color) {
 }
 
 Terrain::Terrain(float density, sf::Color outline_color, sf::Color ground_color) {
+    color = ground_color;
     sf::VertexArray vertices = generate_vertices(density, outline_color);
     set_vertices(vertices);
 
-    create_texture(ground_color);
+    create_texture();
     create_sprite();
 }
 
@@ -49,14 +50,15 @@ void Terrain::draw(sf::RenderWindow& window) {
     window.draw(terrain);
 }
 
-void Terrain::create_texture(sf::Color ground_color) {
+void Terrain::create_texture() {
     texture.create(WIDTH, HEIGHT);
 
-    sf::Image image = texture.copyToImage();
+    sf::Image image;
+    image.create(WIDTH, HEIGHT, sf::Color(0,0,0,0));
     for (int i=0; i<HEIGHT; i++){
         for (int j=0; j<WIDTH; j++) {
             if (i > terrain[j].position.y)
-                image.setPixel(j, i, ground_color);
+                image.setPixel(j, i, color);
         }
     }
 
@@ -65,4 +67,14 @@ void Terrain::create_texture(sf::Color ground_color) {
 
 void Terrain::create_sprite() {
     sprite.setTexture(texture);
+}
+
+void Terrain::destroy(sf::Vector2f location, float radius) {
+    for (int i=int(location.x-radius); i<=location.x+radius; i++) {
+        float new_y = terrain[i].position.y + location.y - terrain[i].position.y + sqrt(radius * radius - (i - location.x) * (i - location.x));
+        terrain[i].position.y = fmax(new_y, terrain[i].position.y);
+    }
+
+    create_texture();
+    create_sprite();
 }
