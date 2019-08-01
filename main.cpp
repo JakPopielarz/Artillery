@@ -58,7 +58,7 @@ int main() {
     settings.antialiasingLevel = 8;
     sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Artillery", sf::Style::Default, settings);
 
-    Terrain terrain = Terrain();
+    Terrain terrain;
 
     while (window.isOpen())
     {
