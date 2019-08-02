@@ -1,22 +1,25 @@
 #include <iostream>
+#include <math.h>
+#include <string>
 #include <SFML/Graphics.hpp>
+#include "Constants.h"
 #include "Point.h"
 #include "Cannon.h"
+#include "Terrain.h"
 
 using namespace std;
 
 int main() {
-    Point point = Point(2, 14314.4f);
-    cout << point << endl;
-    Point point2 = Point(-2, -14314);
-    point += point2;
-    cout << point << endl;
-    Cannon cannon = Cannon(point);
-    cout << cannon.get_hp() << ", " << cannon.get_position() << endl;
+    srand(time(NULL));
 
-    sf::RenderWindow window(sf::VideoMode(200, 200), "SFML works!");
-    sf::CircleShape shape(100.f);
-    shape.setFillColor(sf::Color::Green);
+
+    sf::ContextSettings settings;
+    settings.antialiasingLevel = 8;
+    sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Artillery", sf::Style::Default, settings);
+
+    Terrain terrain;
+
+    Cannon cannon(0, 100, sf::Color::Magenta);
 
     while (window.isOpen())
     {
@@ -27,9 +30,11 @@ int main() {
                 window.close();
         }
 
-        window.clear();
-        window.draw(shape);
+        window.clear(sf::Color(139, 194, 239));
+        terrain.draw(window);
+        cannon.draw(window);
         window.display();
     }
+
     return 0;
 }
