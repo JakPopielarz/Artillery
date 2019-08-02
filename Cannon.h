@@ -14,7 +14,8 @@ private:
     int health_points_;
     Point position_; //of the lower-left corner
     float cannon_angle_;
-    sf::Color colour_;
+    sf::RectangleShape cannon;
+    sf::RectangleShape barrel;
     float width;
     float height;
 public:
