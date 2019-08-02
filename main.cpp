@@ -60,6 +60,8 @@ int main() {
 
     Terrain terrain;
 
+    Cannon cannon(0, 100, sf::Color::Magenta);
+
     while (window.isOpen())
     {
         sf::Event event;
