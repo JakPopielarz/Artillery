@@ -3,16 +3,12 @@
 #include <math.h>
 #include "Terrain.h"
 
-
-unsigned int WIDTH = 800;
-unsigned int HEIGHT = 600;
-
 float get_y(int i, int mod, float phase) {
-    return float(HEIGHT-mod*1.5 - mod*float(sin(phase*M_1_PI + (i * mod*0.0001))));
+    return float(WINDOW_HEIGHT-mod*1.5 - mod*float(sin(phase*M_1_PI + (i * mod*0.0001))));
 }
 
 sf::VertexArray generate_vertices(float density, sf::Color color) {
-    auto number = size_t(WIDTH*density +1);
+    auto number = size_t(WINDOW_WIDTH*density +1);
     sf::VertexArray vertices(sf::LineStrip, number);
 
     int mod = rand() % (150 - 80 + 1) + 80;
@@ -20,8 +16,8 @@ sf::VertexArray generate_vertices(float density, sf::Color color) {
     for(int i=1; i<number; i++) {
         vertices[i].position = sf::Vector2f(i/density, get_y(i, mod, phase));
         vertices[i].color = color;
-        if (vertices[i].position.y > HEIGHT)
-            vertices[i].position.y = HEIGHT;
+        if (vertices[i].position.y > WINDOW_HEIGHT)
+            vertices[i].position.y = WINDOW_HEIGHT;
         if (vertices[i].position.y < 0)
             vertices[i].position.y = 0;
     }
@@ -51,12 +47,12 @@ void Terrain::draw(sf::RenderWindow& window) {
 }
 
 void Terrain::create_texture() {
-    texture.create(WIDTH, HEIGHT);
+    texture.create(WINDOW_WIDTH, WINDOW_HEIGHT);
 
     sf::Image image;
-    image.create(WIDTH, HEIGHT, sf::Color(0,0,0,0));
-    for (unsigned int i=0; i<HEIGHT; i++){
-        for (unsigned int j=0; j<WIDTH; j++) {
+    image.create(WINDOW_WIDTH, WINDOW_HEIGHT, sf::Color(0,0,0,0));
+    for (unsigned int i=0; i<WINDOW_HEIGHT; i++){
+        for (unsigned int j=0; j<WINDOW_WIDTH; j++) {
             if (i > terrain[j].position.y)
                 image.setPixel(j, i, color);
         }
@@ -70,8 +66,9 @@ void Terrain::create_sprite() {
 }
 
 void Terrain::destroy(sf::Vector2f location, float radius) {
-    for (int i=int(fmax(location.x-radius, 0)); i<=fmin(location.x+radius, WIDTH); i++) {
-        float new_y = terrain[i].position.y + location.y - terrain[i].position.y + sqrt(radius * radius - (i - location.x) * (i - location.x));
+    for (int i=int(fmax(location.x-radius, 0)); i<=fmin(location.x+radius, WINDOW_WIDTH); i++) {
+        float new_y = terrain[i].position.y + location.y - terrain[i].position.y +
+                + sqrt(radius * radius - (i - location.x) * (i - location.x));
         terrain[i].position.y = fmax(new_y, terrain[i].position.y);
     }
 

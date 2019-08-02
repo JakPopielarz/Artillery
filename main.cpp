@@ -1,9 +1,7 @@
-<<<<<<< HEAD
 #include <iostream>
 #include <math.h>
 #include <string>
 #include <SFML/Graphics.hpp>
-#include "Constants.h"
 #include "Point.h"
 #include "Cannon.h"
 #include "Terrain.h"
@@ -20,7 +18,7 @@ int main() {
 
     Terrain terrain;
 
-    Cannon cannon(0, 100, sf::Color::Magenta);
+    Cannon cannon(100, 100, sf::Color::Magenta);
 
     while (window.isOpen())
     {
@@ -29,7 +27,15 @@ int main() {
         {
             if (event.type == sf::Event::Closed)
                 window.close();
+            else if (event.type == sf::Event::KeyPressed) {
+                if (event.key.code == sf::Keyboard::Left)
+                    cannon.move_on(terrain, side("left"), CANNON_MOVE_AMOUNT);
+                else if (event.key.code == sf::Keyboard::Right)
+                    cannon.move_on(terrain, side("right"), CANNON_MOVE_AMOUNT);
+            }
         }
+        if (!cannon.is_on(terrain))
+            cannon.fall();
 
         window.clear(sf::Color(139, 194, 239));
         terrain.draw(window);

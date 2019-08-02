@@ -1,5 +1,9 @@
+#ifndef ARTILLERY_TERRAIN_H
+#define ARTILLERY_TERRAIN_H
+
 #include <SFML/Graphics.hpp>
 #include "Point.h"
+#include "Constants.h"
 
 using namespace std;
 
@@ -17,4 +21,7 @@ public:
     void set_vertices(sf::VertexArray &vertices);
     void draw(sf::RenderWindow& window);
     void destroy(sf::Vector2f location, float radius);
+    sf::VertexArray get_vertices() { return terrain; }
 };
+
+#endif //ARTILLERY_TERRAIN_H

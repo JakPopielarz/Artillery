@@ -1,7 +1,3 @@
-//
-// Created by jakub on 12.05.19.
-//
-
 #ifndef ARTILLERY_POINT_H
 #define ARTILLERY_POINT_H
 
