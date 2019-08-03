@@ -55,7 +55,6 @@ public:
     Missile shoot(float, float*);
     void draw(sf::RenderWindow& window);
     bool is_on(Terrain);
-    void move(side side, float amount);
     void move_on(Terrain terrain, side side, float amount);
     void fall();
 };

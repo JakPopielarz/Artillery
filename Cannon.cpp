@@ -41,23 +41,16 @@ bool Cannon::is_on(Terrain terrain) {
     return false;
 }
 
-void Cannon::move(side side, float amount) {
-    sf::Vector2f displacement = side.get_vector() * amount;
-
-    cannon.setPosition(cannon.getPosition().x + displacement.x, cannon.getPosition().y + displacement.y);
-    barrel.setPosition(barrel.getPosition().x + displacement.x, barrel.getPosition().y + displacement.y);
-}
-
 void Cannon::move_on(Terrain terrain, side side, float amount) {
     sf::Vector2f displacement = side.get_vector() * amount;
     sf::VertexArray vertices = terrain.get_vertices();
 
     float offset = 0;
     size_t index;
-    if (side.direction == "left")
-        index = size_t(cannon.getPosition().x+displacement.x);
-    else
+    if (side.direction == "right")
         index = size_t(cannon.getPosition().x+displacement.x+width);
+    else
+        index = size_t(cannon.getPosition().x+displacement.x);
 
     if (cannon.getPosition().y+height <= vertices[index].position.y+MAX_MOVEMENT_ELEVATION) {
         cannon.setPosition(cannon.getPosition().x + displacement.x, cannon.getPosition().y + displacement.y);
@@ -73,7 +66,10 @@ void Cannon::move_on(Terrain terrain, side side, float amount) {
 }
 
 void Cannon::fall() {
-    move(side("down"), fall_velocity);
+    sf::Vector2f displacement = sf::Vector2f(0, fall_velocity);
+
+    cannon.setPosition(cannon.getPosition().x + displacement.x, cannon.getPosition().y + displacement.y);
+    barrel.setPosition(barrel.getPosition().x + displacement.x, barrel.getPosition().y + displacement.y);
     if (fall_velocity < CANNON_MAX_FALL_VELOCITY)
         fall_velocity += CANNON_FALL_VELOCITY_INCREMENT;
 }
