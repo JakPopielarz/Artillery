@@ -52,7 +52,7 @@ public:
     void set_angle(float angle) { cannon_angle_ = angle; }
     float get_angle() { return cannon_angle_; }
     void change_angle(float amount) { cannon_angle_ += amount; }
-    Missile shoot(float, float*);
+    Missile shoot();
     void draw(sf::RenderWindow& window);
     bool is_on(Terrain);
     void move_on(Terrain terrain, side side, float amount);

@@ -17,8 +17,9 @@ int main() {
     sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Artillery", sf::Style::Default, settings);
 
     Terrain terrain;
-
     Cannon cannon(100, 100, sf::Color::Magenta);
+    Missile missile;
+    bool shot_in_progress = false;
 
     while (window.isOpen())
     {
@@ -27,7 +28,7 @@ int main() {
         {
             if (event.type == sf::Event::Closed)
                 window.close();
-            else if (event.type == sf::Event::KeyPressed) {
+            else if (event.type == sf::Event::KeyPressed and !shot_in_progress) {
                 if (event.key.code == sf::Keyboard::Left)
                     cannon.move_on(terrain, side("left"), CANNON_MOVE_AMOUNT);
                 else if (event.key.code == sf::Keyboard::Right)
@@ -36,6 +37,10 @@ int main() {
                     cannon.rotate_barrel(side("up"));
                 else if (event.key.code == sf::Keyboard::Down)
                     cannon.rotate_barrel(side("down"));
+                else if (event.key.code == sf::Keyboard::Space) {
+                    missile = cannon.shoot();
+                    shot_in_progress = true;
+                }
             }
         }
         if (!cannon.is_on(terrain))
@@ -44,6 +49,12 @@ int main() {
         window.clear(sf::Color(139, 194, 239));
         terrain.draw(window);
         cannon.draw(window);
+
+        if (shot_in_progress) {
+            missile.draw(window);
+            missile.move_over(terrain);
+            shot_in_progress = missile.flying;
+        }
         window.display();
     }
 

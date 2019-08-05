@@ -28,8 +28,9 @@ void Cannon::draw(sf::RenderWindow& window) {
     window.draw(barrel);
 }
 
-Missile Cannon::shoot(float force, float wind[]) {
-//    return Missile(position_.get_x()+width/2, position_.get_y()-height/2, force, cannon_angle_, wind[0], wind[1]);
+Missile Cannon::shoot() {
+    Missile missile = Missile(barrel.getPosition(), sf::Vector2f(10, 10));
+    return missile;
 }
 
 bool Cannon::is_on(Terrain terrain) {
@@ -66,12 +67,11 @@ void Cannon::move_on(Terrain terrain, side side, float amount) {
 }
 
 void Cannon::fall() {
-    sf::Vector2f displacement = sf::Vector2f(0, fall_velocity);
 
-    cannon.setPosition(cannon.getPosition().x + displacement.x, cannon.getPosition().y + displacement.y);
-    barrel.setPosition(barrel.getPosition().x + displacement.x, barrel.getPosition().y + displacement.y);
-    if (fall_velocity < CANNON_MAX_FALL_VELOCITY)
-        fall_velocity += CANNON_FALL_VELOCITY_INCREMENT;
+    cannon.setPosition(cannon.getPosition().x, cannon.getPosition().y + fall_velocity);
+    barrel.setPosition(barrel.getPosition().x, barrel.getPosition().y + fall_velocity);
+    if (fall_velocity < MAX_FALL_VELOCITY)
+        fall_velocity += GRAVITY_SPEED;
 }
 
 void Cannon::rotate_barrel(side side) {
