@@ -2,8 +2,8 @@
 // Created by kinga on 5/20/19.
 //
 
-#ifndef JIMPPROJEKT_MISSILE_H
-#define JIMPPROJEKT_MISSILE_H
+#ifndef ARTILLERY_MISSILE_H
+#define ARTILLERY_MISSILE_H
 
 #include <SFML/Graphics.hpp>
 #include <vector>
@@ -12,20 +12,18 @@ using namespace std;
 
 class Missile {
 private:
-    float current_x, current_y;
-    float velocity_x, velocity_y;
-    float radius; //also can be used as a power of destruction ;)
+    sf::CircleShape missile;
+    sf::Vector2f velocity;
 
 public:
-    Missile(float starting_x, float starting_y, float velocity, float alpha, float wind_x, float wind_y);
-    vector<float> get_current_position();
-    vector<float> get_current_velocity();
-    void set_position(float position_x, float position_y);
-    void set_velocity(float velocity_x, float velocity_y);
-    sf::CircleShape shape(); //read the implementation first ;)
-    ~Missile()= default;
+    Missile(float starting_x, float starting_y, float starting_velocity, float alpha, float wind_x=0, float wind_y=0, float size=3, sf::Color color=sf::Color::Black);
+    Missile(sf::Vector2f starting_position, sf::Vector2f starting_velocity, sf::Vector2f wind=sf::Vector2f(0,0), float size=3, sf::Color color=sf::Color::Black);
+    sf::Vector2f get_position() { return missile.getPosition(); };
+    sf::Vector2f get_velocity() { return velocity; };
+    void set_position(sf::Vector2f new_position) { missile.setPosition(new_position); }
+    void set_velocity(sf::Vector2f new_velocity) { velocity=new_velocity; }
+    void draw(sf::RenderWindow& window);
 
 };
 
-
-#endif //JIMPPROJEKT_MISSILE_H
+#endif //ARTILLERY_MISSILE_H
