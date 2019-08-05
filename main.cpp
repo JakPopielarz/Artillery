@@ -32,6 +32,10 @@ int main() {
                     cannon.move_on(terrain, side("left"), CANNON_MOVE_AMOUNT);
                 else if (event.key.code == sf::Keyboard::Right)
                     cannon.move_on(terrain, side("right"), CANNON_MOVE_AMOUNT);
+                else if (event.key.code == sf::Keyboard::Up)
+                    cannon.rotate_barrel(side("up"));
+                else if (event.key.code == sf::Keyboard::Down)
+                    cannon.rotate_barrel(side("down"));
             }
         }
         if (!cannon.is_on(terrain))

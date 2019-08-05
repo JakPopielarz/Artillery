@@ -57,6 +57,7 @@ public:
     bool is_on(Terrain);
     void move_on(Terrain terrain, side side, float amount);
     void fall();
+    void rotate_barrel(side side);
 };
 
 

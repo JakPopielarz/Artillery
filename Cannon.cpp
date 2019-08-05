@@ -73,3 +73,13 @@ void Cannon::fall() {
     if (fall_velocity < CANNON_MAX_FALL_VELOCITY)
         fall_velocity += CANNON_FALL_VELOCITY_INCREMENT;
 }
+
+void Cannon::rotate_barrel(side side) {
+    if (side.direction == "up" and barrel.getRotation() > BARREL_MIN_ROTATION)
+        barrel.rotate(side.vector.y*BARREL_ROTATION_AMOUNT);
+    else if (side.direction == "down") {
+        barrel.rotate(side.vector.y * BARREL_ROTATION_AMOUNT);
+        if (barrel.getRotation() < BARREL_MIN_ROTATION)
+            barrel.setRotation(BARREL_MAX_ROTATION-0.1f);
+    }
+}

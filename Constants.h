@@ -6,6 +6,9 @@ const unsigned int WINDOW_HEIGHT = 600;
 const float CANNON_MAX_FALL_VELOCITY = 0.9f;
 const float CANNON_FALL_VELOCITY_INCREMENT = 0.03f;
 const float CANNON_MOVE_AMOUNT = 0.5f;
-const float MAX_MOVEMENT_ELEVATION = 4;
+const float MAX_MOVEMENT_ELEVATION = 3;
+const float BARREL_ROTATION_AMOUNT = 2.5f;
+const float BARREL_MIN_ROTATION = 180;
+const float BARREL_MAX_ROTATION = 360;
 
 #endif //ARTILLERY_CONSTANTS_H
