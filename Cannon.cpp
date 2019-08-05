@@ -29,7 +29,18 @@ void Cannon::draw(sf::RenderWindow& window) {
 }
 
 Missile Cannon::shoot() {
-    Missile missile = Missile(barrel.getPosition(), sf::Vector2f(10, 10));
+    sf::Vector2f missile_velocity;
+    float rotation_degrees = 360-barrel.getRotation();
+    float rotation_radians = rotation_degrees * float(M_PI/180);
+
+    cout << (360-barrel.getRotation())* float(M_PI/180) << endl;
+    missile_velocity.x = cos(rotation_radians) * 10;
+    missile_velocity.y = sin(rotation_radians) * 10;
+
+    cout << missile_velocity.x << ", " << missile_velocity.y << endl;
+    cout << cos(90* float(M_PI/180)) << ", " << sin(90* float(M_PI/180)) << endl;
+
+    Missile missile = Missile(barrel.getPosition(), missile_velocity);
     return missile;
 }
 

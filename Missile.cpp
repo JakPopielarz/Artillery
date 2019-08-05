@@ -39,7 +39,8 @@ bool Missile::check_flying_over(Terrain &terrain) {
     sf::VertexArray vertices = terrain.get_vertices();
 
     auto index = size_t(missile.getPosition().x);
-    return (missile.getPosition().y < vertices[index].position.y);
+    return (missile.getPosition().y < vertices[index].position.y &&
+            missile.getPosition().y > 0 && missile.getPosition().y < WINDOW_HEIGHT);
 }
 
 void Missile::reset() {
