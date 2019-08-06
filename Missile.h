@@ -26,6 +26,7 @@ public:
     Missile(sf::Vector2f starting_position, sf::Vector2f starting_velocity, sf::Vector2f wind=sf::Vector2f(0,0), float size=2, sf::Color color=sf::Color::Black);
     sf::Vector2f get_position() { return missile.getPosition(); };
     sf::Vector2f get_velocity() { return velocity; };
+    float get_radius() { return  missile.getRadius(); };
     void set_position(sf::Vector2f new_position) { missile.setPosition(new_position); }
     void set_velocity(sf::Vector2f new_velocity) { velocity=new_velocity; }
     void draw(sf::RenderWindow& window);

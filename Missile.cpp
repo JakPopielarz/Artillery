@@ -29,10 +29,6 @@ void Missile::move_over(Terrain& terrain) {
     velocity.y -= GRAVITY_SPEED;
 
     flying = check_flying_over(terrain);
-    if (!flying) {
-        terrain.destroy(missile.getPosition(), missile.getRadius()*10);
-        reset();
-    }
 }
 
 bool Missile::check_flying_over(Terrain &terrain) {

@@ -2,7 +2,6 @@
 #define ARTILLERY_TERRAIN_H
 
 #include <SFML/Graphics.hpp>
-#include "Point.h"
 #include "Constants.h"
 
 using namespace std;

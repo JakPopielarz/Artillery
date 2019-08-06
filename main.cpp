@@ -17,103 +17,82 @@ int main() {
     sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Artillery", sf::Style::Default, settings);
 
     Terrain terrain;
-    Cannon cannon(100, 100, sf::Color::Magenta);
+    vector<Cannon*> cannons;
+    cannons.emplace_back(new Cannon(100, 100, sf::Color::Magenta));
+    cannons.emplace_back(new Cannon(200, 100, sf::Color::Cyan));
+    cannons.emplace_back(new Cannon(300, 100, sf::Color::Yellow));
+    cannons.emplace_back(new Cannon(400, 100, sf::Color::Black));
+    Cannon* cannon;
     Missile missile;
     bool shot_in_progress = false;
+    int turn = 0;
 
     while (window.isOpen())
     {
+        cannon = cannons[turn];
         sf::Event event;
         while (window.pollEvent(event))
         {
             if (event.type == sf::Event::Closed)
                 window.close();
-            else if (event.type == sf::Event::KeyPressed and !shot_in_progress) {
+            else if (event.type == sf::Event::KeyPressed and !shot_in_progress and cannon->get_hp() > 0) {
                 if (event.key.code == sf::Keyboard::Left)
-                    cannon.move_on(terrain, side("left"), CANNON_MOVE_AMOUNT);
+                    cannon->move_on(terrain, side("left"), CANNON_MOVE_AMOUNT);
                 else if (event.key.code == sf::Keyboard::Right)
-                    cannon.move_on(terrain, side("right"), CANNON_MOVE_AMOUNT);
+                    cannon->move_on(terrain, side("right"), CANNON_MOVE_AMOUNT);
                 else if (event.key.code == sf::Keyboard::Up)
-                    cannon.rotate_barrel(side("up"));
+                    cannon->rotate_barrel(side("up"));
                 else if (event.key.code == sf::Keyboard::Down)
-                    cannon.rotate_barrel(side("down"));
+                    cannon->rotate_barrel(side("down"));
                 else if (event.key.code == sf::Keyboard::Space) {
-                    missile = cannon.shoot();
+                    missile = cannon->shoot();
                     shot_in_progress = true;
                 }
             }
         }
-        if (!cannon.is_on(terrain))
-            cannon.fall();
 
         window.clear(sf::Color(139, 194, 239));
         terrain.draw(window);
-        cannon.draw(window);
-
+        for (auto i: cannons) {
+            if (!i->is_on(terrain) && i->get_hp() > 0)
+                i->fall();
+            i->draw(window);
+        }
+        cannon->display_hit_points(window);
         if (shot_in_progress) {
             missile.draw(window);
             missile.move_over(terrain);
             shot_in_progress = missile.flying;
+            if (!shot_in_progress) {
+                terrain.destroy(missile.get_position(), missile.get_radius() * 10);
+
+                int i = 0;
+                while (i<cannons.size()) {
+                    if (cannons[i]->in_explosion(missile.get_position(), missile.get_radius() * 10))
+                        cannons[i]->lower_hp(int(missile.get_radius() * 8));
+
+                    if (cannons[i]->get_hp() <= 0 and cannons[i]->get_position().x >= 0) {
+                        missile = cannons[i]->destroy();
+                        shot_in_progress = true;
+                    }
+
+                    if (cannons[i]->get_position().x < 0)
+                        cannons.erase(cannons.begin()+i);
+                    
+                    i += 1;
+                }
+
+                if (!shot_in_progress) {
+                    missile.reset();
+
+                    turn += 1;
+                    if (turn >= cannons.size())
+                        turn = 0;
+                }
+            }
         }
         window.display();
     }
 
     return 0;
 }
-/*
-#include <iostream>
-#include <SFML/Graphics.hpp>
-#include "Point.h"
-#include "Cannon.h"
-
-using namespace std;
-bool missile_in_the_air(float missile_x, float missile_y, float terrain[]){ //terrrain to tablica terenu, zmieni� nazwy zmiennych jak b�dzie wrzucony missile
-	if(missile_y>terrain[missile_x])
-		return true;
-	return false;
-}
-int main() {
-    Point point = Point(2, 14314.4f);
-    cout << point << endl;
-    Point point2 = Point(-2, -14314);
-    point += point2;
-    cout << point << endl;
-    Cannon cannon = Cannon(point);
-    cout << cannon.get_hp() << ", " << cannon.get_position() << endl;
-
-    sf::RenderWindow window(sf::VideoMode(200, 200), "SFML works!");
-    sf::CircleShape shape(100.f);
-    shape.setFillColor(sf::Color::Green);
-
-    while (window.isOpen())
-    {
-        sf::Event event;
-        while (window.pollEvent(event))
-        {
-            if (event.type == sf::Event::Closed)
-                window.close();
-        }
-
-        window.clear();
-        window.draw(shape);
-        window.display();
-    }
-    //trzeba pobra� z obiektu px, py, vx i vy
-	float gravity = 9.81; // 9,81m/s^2
-	float delta_time = 0.01; // 0,01s
-	float mis_position[400]; //tablica zapisuj�ca tor ruchu pocisku
-	int current_x = px; //obecny indeks w tablicy toru ruchu
-	mis_position[current_x] = py; //zapisujemy pozycj� startow� w tablicy po�o�enia
-	current_x ++;
-	while(missile_in_the_air){ // czy pocisk jest nad ziemi�
-		px += vx*delta_time; // zmieniam pozycj� x
-		py += (vy*delta_time) - (gravity*delta_time*delta_time/2); //zmieniam pozycj� y
-		vy -= gravity+delta_time; //zmieniam pr�dko�� y
-		if(px>current_x){ //kiedy po�o�enie pocisku przekroczy indeks x terenu, wtedy
-			terrain[current_x] = py;
-			current_x++;
-		}
-		}
-    return 0;
-}
-*/

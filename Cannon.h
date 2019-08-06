@@ -34,8 +34,9 @@ typedef struct side {
 
 class Cannon {
 private:
-    int health_points_;
-    float cannon_angle_;
+    sf::Font font;
+    int hit_points_int;
+    sf::Text hit_points;
     sf::RectangleShape cannon;
     sf::RectangleShape barrel;
     float width;
@@ -43,21 +44,24 @@ private:
     float fall_velocity;
 public:
     explicit Cannon(float position_x, float position_y, sf::Color colour);
-    int get_hp() { return health_points_; }
+    int get_hp() { return hit_points_int; }
     sf::Vector2f get_position() { return cannon.getPosition(); }
-    void set_hp(int hp) { health_points_ = hp; }
-    void lower_hp(int amount) { health_points_ -= amount; }
+    void set_hp(int hp) { hit_points_int = hp; }
+    void lower_hp(int amount);
     void set_position(sf::Vector2f position) { cannon.setPosition(position); }
     void set_position(float position_x, float position_y) { cannon.setPosition(position_x, position_y); }
-    void set_angle(float angle) { cannon_angle_ = angle; }
-    float get_angle() { return cannon_angle_; }
-    void change_angle(float amount) { cannon_angle_ += amount; }
+    void set_angle(float angle) { barrel.setRotation(angle); }
+    float get_angle() { return barrel.getRotation(); }
+    void change_angle(float amount) { barrel.rotate(amount); }
     Missile shoot();
     void draw(sf::RenderWindow& window);
+    void display_hit_points(sf::RenderWindow& window);
     bool is_on(Terrain);
     void move_on(Terrain terrain, side side, float amount);
     void fall();
     void rotate_barrel(side side);
+    bool in_explosion(sf::Vector2f location, float radius);
+    Missile destroy();
 };
 
 
