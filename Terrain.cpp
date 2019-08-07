@@ -1,6 +1,3 @@
-#include <iostream>
-#include <vector>
-#include <math.h>
 #include "Terrain.h"
 
 float get_y(int i, int mod, float phase) {

@@ -1,10 +1,10 @@
 #ifndef ARTILLERY_TERRAIN_H
 #define ARTILLERY_TERRAIN_H
 
+#include <vector>
+#include <math.h>
 #include <SFML/Graphics.hpp>
 #include "Constants.h"
-
-using namespace std;
 
 class Terrain{
 private:

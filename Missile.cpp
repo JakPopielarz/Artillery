@@ -3,7 +3,6 @@
 //
 
 #include "Missile.h"
-using namespace std;
 
 Missile::Missile(float starting_x, float starting_y, float starting_velocity, float alpha, float wind_x, float wind_y, float size, sf::Color color) {
     velocity = sf::Vector2f(cos(alpha)*starting_velocity+wind_x, sin(alpha)*starting_velocity+wind_y);

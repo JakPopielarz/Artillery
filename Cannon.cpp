@@ -9,8 +9,9 @@ float distance(sf::Vector2f point1, sf::Vector2f point2) {
     return distance;
 }
 
-Cannon::Cannon(float position_x, float position_y, sf::Color colour) {
+Cannon::Cannon(float position_x, float position_y, sf::Color colour, string nick) {
     fall_velocity = 0;
+    name = nick;
 
     cannon.setSize(sf::Vector2f(CANNON_SIZE.x, CANNON_SIZE.y));
     cannon.setFillColor(colour);

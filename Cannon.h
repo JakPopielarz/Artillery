@@ -5,10 +5,12 @@
 #ifndef ARTILLERY_CANNON_H
 #define ARTILLERY_CANNON_H
 
+#include <iostream>
 #include <SFML/Graphics.hpp>
-#include "Point.h"
 #include "Missile.h"
 #include "Terrain.h"
+
+using namespace std;
 
 typedef struct side {
     string direction;
@@ -43,7 +45,8 @@ private:
     float height;
     float fall_velocity;
 public:
-    explicit Cannon(float position_x, float position_y, sf::Color colour);
+    string name;
+    explicit Cannon(float position_x, float position_y, sf::Color colour, string nick);
     int get_hp() { return hit_points_int; }
     sf::Vector2f get_position() { return cannon.getPosition(); }
     void set_hp(int hp) { hit_points_int = hp; }
@@ -53,6 +56,7 @@ public:
     void set_angle(float angle) { barrel.setRotation(angle); }
     float get_angle() { return barrel.getRotation(); }
     void change_angle(float amount) { barrel.rotate(amount); }
+    sf::Color get_color() { return cannon.getFillColor(); };
     Missile shoot();
     void draw(sf::RenderWindow& window);
     void display_hit_points(sf::RenderWindow& window);

@@ -2,9 +2,9 @@
 #include <math.h>
 #include <string>
 #include <SFML/Graphics.hpp>
-#include "Point.h"
 #include "Cannon.h"
 #include "Terrain.h"
+#include "EndScreen.h"
 
 using namespace std;
 
@@ -18,10 +18,10 @@ int main() {
 
     Terrain terrain;
     vector<Cannon*> cannons;
-    cannons.emplace_back(new Cannon(100, 100, sf::Color::Magenta));
-    cannons.emplace_back(new Cannon(200, 100, sf::Color::Cyan));
-    cannons.emplace_back(new Cannon(300, 100, sf::Color::Yellow));
-    cannons.emplace_back(new Cannon(400, 100, sf::Color::Black));
+    cannons.emplace_back(new Cannon(100, 100, sf::Color::Magenta, "Magenta"));
+    cannons.emplace_back(new Cannon(200, 100, sf::Color::Cyan, "Cyan"));
+    cannons.emplace_back(new Cannon(300, 100, sf::Color::Yellow, "Yellow"));
+    cannons.emplace_back(new Cannon(400, 100, sf::Color::Black, "Black"));
     Cannon* cannon;
     Missile missile;
     bool shot_in_progress = false;
@@ -53,44 +53,55 @@ int main() {
 
         window.clear(sf::Color(139, 194, 239));
         terrain.draw(window);
-        for (auto i: cannons) {
-            if (!i->is_on(terrain) && i->get_hp() > 0)
-                i->fall();
-            i->draw(window);
-        }
-        cannon->display_hit_points(window);
-        if (shot_in_progress) {
-            missile.draw(window);
-            missile.move_over(terrain);
-            shot_in_progress = missile.flying;
-            if (!shot_in_progress) {
-                terrain.destroy(missile.get_position(), missile.get_radius() * 10);
 
-                int i = 0;
-                while (i<cannons.size()) {
-                    if (cannons[i]->in_explosion(missile.get_position(), missile.get_radius() * 10))
-                        cannons[i]->lower_hp(int(missile.get_radius() * 8));
+        if (cannons.size() > 1) {
+            for (auto i: cannons) {
+                if (!i->is_on(terrain) && i->get_hp() > 0)
+                    i->fall();
+                i->draw(window);
+            }
+            cannon->display_hit_points(window);
+            if (shot_in_progress) {
+                missile.draw(window);
+                missile.move_over(terrain);
+                shot_in_progress = missile.flying;
+                if (!shot_in_progress) {
+                    terrain.destroy(missile.get_position(), missile.get_radius() * 10);
 
-                    if (cannons[i]->get_hp() <= 0 and cannons[i]->get_position().x >= 0) {
-                        missile = cannons[i]->destroy();
-                        shot_in_progress = true;
+                    int i = 0;
+                    while (i < cannons.size()) {
+                        if (cannons[i]->in_explosion(missile.get_position(), missile.get_radius() * 10))
+                            cannons[i]->lower_hp(int(missile.get_radius() * 8));
+
+                        if (cannons[i]->get_hp() <= 0 and cannons[i]->get_position().x >= 0) {
+                            missile = cannons[i]->destroy();
+                            shot_in_progress = true;
+                        }
+
+                        if (cannons[i]->get_position().x < 0)
+                            cannons.erase(cannons.begin() + i);
+
+                        i += 1;
                     }
 
-                    if (cannons[i]->get_position().x < 0)
-                        cannons.erase(cannons.begin()+i);
-                    
-                    i += 1;
-                }
+                    if (!shot_in_progress) {
+                        missile.reset();
 
-                if (!shot_in_progress) {
-                    missile.reset();
-
-                    turn += 1;
-                    if (turn >= cannons.size())
-                        turn = 0;
+                        turn += 1;
+                        if (turn >= cannons.size())
+                            turn = 0;
+                    }
                 }
             }
+        } else if (cannons.size() == 1) {
+            Cannon* winner = cannons[0];
+            EndScreen end(winner->name, winner->get_color());
+            end.draw(window);
+        } else {
+            EndScreen end("Noone! (DRAW)");
+            end.draw(window);
         }
+
         window.display();
     }
 

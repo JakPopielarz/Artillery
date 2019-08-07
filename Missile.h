@@ -11,8 +11,6 @@
 #include "Constants.h"
 #include "Terrain.h"
 
-using namespace std;
-
 class Missile {
 private:
     sf::CircleShape missile;
