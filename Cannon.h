@@ -46,7 +46,7 @@ private:
     float fall_velocity;
 public:
     string name;
-    explicit Cannon(float position_x, float position_y, sf::Color colour, string nick);
+    explicit Cannon(sf::Vector2f position, sf::Color colour, string nick);
     int get_hp() { return hit_points_int; }
     sf::Vector2f get_position() { return cannon.getPosition(); }
     void set_hp(int hp) { hit_points_int = hp; }

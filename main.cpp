@@ -8,6 +8,20 @@
 
 using namespace std;
 
+sf::Vector2f generate_spawn_point_on(Terrain terrain) {
+    sf::Vector2f spawn;
+    sf::VertexArray vertices = terrain.get_vertices();
+
+    spawn.x = rand() % (int(800-CANNON_SIZE.x) + 1);
+    spawn.y = vertices[spawn.x].position.y;
+    for (float i=spawn.x; i<=spawn.x+CANNON_SIZE.x; i++) {
+        if (vertices[i].position.y < spawn.y)
+            spawn.y = vertices[i].position.y;
+    }
+
+    return spawn;
+}
+
 int main() {
     srand(time(NULL));
 
@@ -18,10 +32,10 @@ int main() {
 
     Terrain terrain;
     vector<Cannon*> cannons;
-    cannons.emplace_back(new Cannon(100, 100, sf::Color::Magenta, "Magenta"));
-    cannons.emplace_back(new Cannon(200, 100, sf::Color::Cyan, "Cyan"));
-    cannons.emplace_back(new Cannon(300, 100, sf::Color::Yellow, "Yellow"));
-    cannons.emplace_back(new Cannon(400, 100, sf::Color::Black, "Black"));
+    cannons.emplace_back(new Cannon(generate_spawn_point_on(terrain), sf::Color::Magenta, "Magenta"));
+    cannons.emplace_back(new Cannon(generate_spawn_point_on(terrain), sf::Color::Cyan, "Cyan"));
+    cannons.emplace_back(new Cannon(generate_spawn_point_on(terrain), sf::Color::Yellow, "Yellow"));
+    cannons.emplace_back(new Cannon(generate_spawn_point_on(terrain), sf::Color::Black, "Black"));
     Cannon* cannon;
     Missile missile;
     bool shot_in_progress = false;

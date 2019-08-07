@@ -9,7 +9,7 @@ float distance(sf::Vector2f point1, sf::Vector2f point2) {
     return distance;
 }
 
-Cannon::Cannon(float position_x, float position_y, sf::Color colour, string nick) {
+Cannon::Cannon(sf::Vector2f position, sf::Color colour, string nick) {
     fall_velocity = 0;
     name = nick;
 
@@ -17,11 +17,11 @@ Cannon::Cannon(float position_x, float position_y, sf::Color colour, string nick
     cannon.setFillColor(colour);
     cannon.setOutlineThickness(-1.f);
     cannon.setOutlineColor(sf::Color::Black);
-    cannon.setPosition(position_x, position_y - cannon.getSize().y);
+    cannon.setPosition(position.x, position.y - cannon.getSize().y);
 
     barrel.setSize(sf::Vector2f(12, 1));
     barrel.setFillColor(sf::Color::Black);
-    barrel.setPosition(position_x + cannon.getSize().x / 2, position_y - cannon.getSize().y / 2);
+    barrel.setPosition(position.x + cannon.getSize().x / 2, position.y - cannon.getSize().y / 2);
     barrel.rotate(-90);
 
     hit_points_int = 100;
