@@ -36,14 +36,13 @@ typedef struct side {
 
 class Cannon {
 private:
-    sf::Font font;
     int hit_points_int;
-    sf::Text hit_points;
     sf::RectangleShape cannon;
     sf::RectangleShape barrel;
     float width;
     float height;
     float fall_velocity;
+    float shot_strength;
 public:
     string name;
     explicit Cannon(sf::Vector2f position, sf::Color colour, string nick);
@@ -56,10 +55,11 @@ public:
     void set_angle(float angle) { barrel.setRotation(angle); }
     float get_angle() { return barrel.getRotation(); }
     void change_angle(float amount) { barrel.rotate(amount); }
-    sf::Color get_color() { return cannon.getFillColor(); };
+    float get_shot_strength() { return shot_strength; }
+    void change_shot_strength(float amount);
+    sf::Color get_color() { return cannon.getFillColor(); }
     Missile shoot();
     void draw(sf::RenderWindow& window);
-    void display_hit_points(sf::RenderWindow& window);
     bool is_on(Terrain);
     void move_on(Terrain terrain, side side, float amount);
     void fall();

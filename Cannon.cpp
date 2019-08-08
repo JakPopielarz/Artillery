@@ -4,14 +4,29 @@
 
 #include "Cannon.h"
 
+float min(float float1, float float2) {
+    if (float1 < float2)
+        return float1;
+    else
+        return float2;
+}
+
+float max(float float1, float float2) {
+    if (float1 > float2)
+        return float1;
+    else
+        return float2;
+}
+
 float distance(sf::Vector2f point1, sf::Vector2f point2) {
     auto distance = float(sqrt(pow(point1.x-point2.x, 2) + pow(point1.y-point2.y, 2)));
     return distance;
 }
 
 Cannon::Cannon(sf::Vector2f position, sf::Color colour, string nick) {
-    fall_velocity = 0;
     name = nick;
+    fall_velocity = 0;
+    shot_strength = 50;
 
     cannon.setSize(sf::Vector2f(CANNON_SIZE.x, CANNON_SIZE.y));
     cannon.setFillColor(colour);
@@ -25,15 +40,6 @@ Cannon::Cannon(sf::Vector2f position, sf::Color colour, string nick) {
     barrel.rotate(-90);
 
     hit_points_int = 100;
-    if (!font.loadFromFile("../Resources/Fonts/ALoveofThunder.ttf")) {
-        cout << "Error loading font from file" << endl;
-        system("pause");
-    }
-    hit_points.setFont(font);
-    string hp_string = "HP: " + to_string(hit_points_int);
-    hit_points.setString(hp_string);
-    hit_points.setPosition(10, 10);
-    hit_points.setFillColor(colour);
 }
 
 void Cannon::draw(sf::RenderWindow& window) {
@@ -41,10 +47,11 @@ void Cannon::draw(sf::RenderWindow& window) {
     window.draw(barrel);
 }
 
-void Cannon::display_hit_points(sf::RenderWindow &window) {
-    string hp_string = "HP: " + to_string(hit_points_int);
-    hit_points.setString(hp_string);
-    window.draw(hit_points);
+void Cannon::change_shot_strength(float amount) {
+    if (amount < 0)
+        shot_strength = max(shot_strength+amount, 0);
+    else if (amount > 0)
+        shot_strength = min(shot_strength+amount, 100);
 }
 
 Missile Cannon::shoot() {
@@ -52,8 +59,8 @@ Missile Cannon::shoot() {
     float rotation_degrees = 360-barrel.getRotation();
     float rotation_radians = rotation_degrees * float(M_PI/180);
 
-    missile_velocity.x = cos(rotation_radians) * 10;
-    missile_velocity.y = sin(rotation_radians) * 10;
+    missile_velocity.x = cos(rotation_radians) * DEFAULT_SHOT_STRENGTH * shot_strength/100;
+    missile_velocity.y = sin(rotation_radians) * DEFAULT_SHOT_STRENGTH * shot_strength/100;
 
     Missile missile = Missile(barrel.getPosition(), missile_velocity);
     return missile;

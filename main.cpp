@@ -5,6 +5,7 @@
 #include "Cannon.h"
 #include "Terrain.h"
 #include "EndScreen.h"
+#include "InGameUI.h"
 
 using namespace std;
 
@@ -32,8 +33,8 @@ int main() {
 
     Terrain terrain;
     vector<Cannon*> cannons;
-    cannons.emplace_back(new Cannon(generate_spawn_point_on(terrain), sf::Color::Magenta, "Magenta"));
-    cannons.emplace_back(new Cannon(generate_spawn_point_on(terrain), sf::Color::Cyan, "Cyan"));
+    cannons.emplace_back(new Cannon(generate_spawn_point_on(terrain), sf::Color::Magenta, "Kuba"));
+    cannons.emplace_back(new Cannon(generate_spawn_point_on(terrain), sf::Color::Green, "Asia"));
     cannons.emplace_back(new Cannon(generate_spawn_point_on(terrain), sf::Color::Yellow, "Yellow"));
     cannons.emplace_back(new Cannon(generate_spawn_point_on(terrain), sf::Color::Black, "Black"));
     Cannon* cannon;
@@ -43,38 +44,43 @@ int main() {
 
     while (window.isOpen())
     {
-        cannon = cannons[turn];
         sf::Event event;
-        while (window.pollEvent(event))
-        {
-            if (event.type == sf::Event::Closed)
-                window.close();
-            else if (event.type == sf::Event::KeyPressed and !shot_in_progress and cannon->get_hp() > 0) {
-                if (event.key.code == sf::Keyboard::Left)
-                    cannon->move_on(terrain, side("left"), CANNON_MOVE_AMOUNT);
-                else if (event.key.code == sf::Keyboard::Right)
-                    cannon->move_on(terrain, side("right"), CANNON_MOVE_AMOUNT);
-                else if (event.key.code == sf::Keyboard::Up)
-                    cannon->rotate_barrel(side("up"));
-                else if (event.key.code == sf::Keyboard::Down)
-                    cannon->rotate_barrel(side("down"));
-                else if (event.key.code == sf::Keyboard::Space) {
-                    missile = cannon->shoot();
-                    shot_in_progress = true;
-                }
-            }
-        }
-
-        window.clear(sf::Color(139, 194, 239));
-        terrain.draw(window);
+        if (event.type == sf::Event::Closed)
+            window.close();
 
         if (cannons.size() > 1) {
+            cannon = cannons[turn];
+            InGameUI UI = InGameUI(cannon);
+            while (window.pollEvent(event))
+            {
+                if (event.type == sf::Event::KeyPressed and !shot_in_progress and cannon->get_hp() > 0) {
+                    if (event.key.code == sf::Keyboard::Left)
+                        cannon->move_on(terrain, side("left"), CANNON_MOVE_AMOUNT);
+                    else if (event.key.code == sf::Keyboard::Right)
+                        cannon->move_on(terrain, side("right"), CANNON_MOVE_AMOUNT);
+                    else if (event.key.code == sf::Keyboard::Up)
+                        cannon->rotate_barrel(side("up"));
+                    else if (event.key.code == sf::Keyboard::Down)
+                        cannon->rotate_barrel(side("down"));
+                    else if (event.key.code == sf::Keyboard::Space) {
+                        missile = cannon->shoot();
+                        shot_in_progress = true;
+                    } else if (event.key.code == sf::Keyboard::A)
+                        cannon->change_shot_strength(SHOT_STRENGTH_DELTA);
+                    else if (event.key.code == sf::Keyboard::Z)
+                        cannon->change_shot_strength(-SHOT_STRENGTH_DELTA);
+                }
+            }
+
+            window.clear(sf::Color(139, 194, 239));
+            terrain.draw(window);
+            UI.draw(window);
             for (auto i: cannons) {
                 if (!i->is_on(terrain) && i->get_hp() > 0)
                     i->fall();
                 i->draw(window);
             }
-            cannon->display_hit_points(window);
+
             if (shot_in_progress) {
                 missile.draw(window);
                 missile.move_over(terrain);
