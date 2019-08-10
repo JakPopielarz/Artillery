@@ -54,15 +54,15 @@ void Cannon::change_shot_strength(float amount) {
         shot_strength = min(shot_strength+amount, 100);
 }
 
-Missile Cannon::shoot() {
+Missile Cannon::shoot(float wind_strength) {
     sf::Vector2f missile_velocity;
     float rotation_degrees = 360-barrel.getRotation();
     float rotation_radians = rotation_degrees * float(M_PI/180);
 
-    missile_velocity.x = cos(rotation_radians) * DEFAULT_SHOT_STRENGTH * shot_strength/100;
-    missile_velocity.y = sin(rotation_radians) * DEFAULT_SHOT_STRENGTH * shot_strength/100;
+    missile_velocity.x = cos(rotation_radians) * MAX_SHOT_STRENGTH * shot_strength / 100;
+    missile_velocity.y = sin(rotation_radians) * MAX_SHOT_STRENGTH * shot_strength / 100;
 
-    Missile missile = Missile(barrel.getPosition(), missile_velocity);
+    Missile missile = Missile(barrel.getPosition(), missile_velocity, wind_strength);
     return missile;
 }
 
@@ -142,6 +142,6 @@ Missile Cannon::destroy() {
     cannon.setPosition(-1000, -1000);
     barrel.setPosition(-1000, -1000);
 
-    Missile phantom = Missile(cannon_center, sf::Vector2f(0,0), sf::Vector2f(0,0), CANNON_EXPLOSION_SIZE, sf::Color::Transparent);
+    Missile phantom = Missile(cannon_center, sf::Vector2f(0,0), 0, CANNON_EXPLOSION_SIZE, sf::Color::Transparent);
     return phantom;
 }

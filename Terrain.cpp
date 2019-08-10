@@ -1,7 +1,7 @@
 #include "Terrain.h"
 
 float get_y(int i, int mod, float phase) {
-    return float(WINDOW_HEIGHT-mod*1.5 - mod*float(sin(phase*M_1_PI + (i * mod*0.0001))));
+    return float(WINDOW_HEIGHT-mod*1.5 - float(mod*sin(phase*M_1_PI + (i * mod*0.0001))));
 }
 
 sf::VertexArray generate_vertices(float density, sf::Color color) {

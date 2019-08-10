@@ -58,7 +58,7 @@ public:
     float get_shot_strength() { return shot_strength; }
     void change_shot_strength(float amount);
     sf::Color get_color() { return cannon.getFillColor(); }
-    Missile shoot();
+    Missile shoot(float wind_strength);
     void draw(sf::RenderWindow& window);
     bool is_on(Terrain);
     void move_on(Terrain terrain, side side, float amount);

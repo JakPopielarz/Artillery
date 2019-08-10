@@ -16,6 +16,10 @@ const float BARREL_MAX_ROTATION = 360;
 const float CANNON_EXPLOSION_SIZE = 5;
 const float WINDOW_MARGIN = 10;
 const float SHOT_STRENGTH_DELTA = 2.5f;
-const float DEFAULT_SHOT_STRENGTH = 15;
+const float MAX_SHOT_STRENGTH = 15;
+const float WIND_ARROW_WIDTH = 3;
+const sf::Vector2f WIND_TEXT_POSITION = sf::Vector2f(WINDOW_WIDTH/2.f, WINDOW_MARGIN);
+const unsigned int WIND_CHAR_SIZE = 10;
+const int MAX_WIND_STRENGTH = 10;
 
 #endif //ARTILLERY_CONSTANTS_H

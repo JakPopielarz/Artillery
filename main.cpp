@@ -23,6 +23,10 @@ sf::Vector2f generate_spawn_point_on(Terrain terrain) {
     return spawn;
 }
 
+float generate_wind() {
+    return rand() % ((2*MAX_WIND_STRENGTH + 1) - MAX_WIND_STRENGTH);
+}
+
 int main() {
     srand(time(NULL));
 
@@ -41,6 +45,7 @@ int main() {
     Missile missile;
     bool shot_in_progress = false;
     int turn = 0;
+    float wind_strength = generate_wind();
 
     while (window.isOpen())
     {
@@ -50,7 +55,7 @@ int main() {
 
         if (cannons.size() > 1) {
             cannon = cannons[turn];
-            InGameUI UI = InGameUI(cannon);
+            InGameUI UI = InGameUI(cannon, wind_strength);
             while (window.pollEvent(event))
             {
                 if (event.type == sf::Event::KeyPressed and !shot_in_progress and cannon->get_hp() > 0) {
@@ -63,7 +68,7 @@ int main() {
                     else if (event.key.code == sf::Keyboard::Down)
                         cannon->rotate_barrel(side("down"));
                     else if (event.key.code == sf::Keyboard::Space) {
-                        missile = cannon->shoot();
+                        missile = cannon->shoot(wind_strength);
                         shot_in_progress = true;
                     } else if (event.key.code == sf::Keyboard::A)
                         cannon->change_shot_strength(SHOT_STRENGTH_DELTA);
@@ -106,6 +111,7 @@ int main() {
 
                     if (!shot_in_progress) {
                         missile.reset();
+                        wind_strength = generate_wind();
 
                         turn += 1;
                         if (turn >= cannons.size())
