@@ -6,6 +6,7 @@
 #define ARTILLERY_MISSILE_H
 
 #include <SFML/Graphics.hpp>
+#include <iostream>
 #include <vector>
 #include <math.h>
 #include "Constants.h"
@@ -30,6 +31,8 @@ public:
     void move_over(Terrain& terrain);
     void reset();
     bool check_flying_over(Terrain& terrain);
+    void explode(sf::RenderWindow& window);
+    bool in_screen();
 };
 
 #endif //ARTILLERY_MISSILE_H

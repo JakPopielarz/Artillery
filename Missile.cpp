@@ -8,6 +8,7 @@ Missile::Missile() {
     wind_strength = 0;
     velocity = sf::Vector2f(0,0);
     missile.setRadius(2);
+    missile.setOrigin(missile.getRadius(), missile.getRadius());
     missile.setPosition(sf::Vector2f(-1000, - 1000));
     missile.setFillColor(sf::Color::Black);
 }
@@ -16,6 +17,7 @@ Missile::Missile(sf::Vector2f starting_position, sf::Vector2f starting_velocity,
     wind_strength = wind;
     velocity = starting_velocity;
     missile.setRadius(size);
+    missile.setOrigin(missile.getRadius(), missile.getRadius());
     missile.setPosition(starting_position);
     missile.setFillColor(color);
 }
@@ -44,4 +46,25 @@ bool Missile::check_flying_over(Terrain &terrain) {
 void Missile::reset() {
     velocity = sf::Vector2f(0,0);
     missile.setPosition(-1000, -1000);
+}
+
+void Missile::explode(sf::RenderWindow& window) {
+    float starting_radius = missile.getRadius();
+    sf::Vector2f explosion_position = missile.getPosition();
+    missile.setFillColor(sf::Color(255, 71, 26));
+
+    while (missile.getRadius() < starting_radius * 10 && in_screen()) {
+        missile.setRadius(missile.getRadius() + MISSILE_EXPLOSION_INCREMENT);
+        missile.setPosition(explosion_position.x-missile.getRadius(), explosion_position.y-missile.getRadius());
+        draw(window);
+        window.display();
+    }
+
+    missile.setRadius(starting_radius);
+    missile.setPosition(explosion_position);
+}
+
+bool Missile::in_screen() {
+    return (missile.getPosition().x > 0 && missile.getPosition().x < WINDOW_WIDTH &&
+            missile.getPosition().y > 0 && missile.getPosition().y < WINDOW_HEIGHT);
 }

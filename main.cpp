@@ -37,10 +37,10 @@ int main() {
 
     Terrain terrain;
     vector<Cannon*> cannons;
-    cannons.emplace_back(new Cannon(generate_spawn_point_on(terrain), sf::Color::Magenta, "Kuba"));
-    cannons.emplace_back(new Cannon(generate_spawn_point_on(terrain), sf::Color::Green, "Asia"));
-    cannons.emplace_back(new Cannon(generate_spawn_point_on(terrain), sf::Color::Yellow, "Yellow"));
-    cannons.emplace_back(new Cannon(generate_spawn_point_on(terrain), sf::Color::Black, "Black"));
+    cannons.emplace_back(new Cannon(generate_spawn_point_on(terrain), sf::Color::Magenta, "Magenta"));
+    cannons.emplace_back(new Cannon(generate_spawn_point_on(terrain), sf::Color::Green, "Green"));
+    cannons.emplace_back(new Cannon(generate_spawn_point_on(terrain), sf::Color::Yellow, "Yellow"));/*
+    cannons.emplace_back(new Cannon(generate_spawn_point_on(terrain), sf::Color::Black, "Black"));*/
     Cannon* cannon;
     Missile missile;
     bool shot_in_progress = false;
@@ -91,6 +91,7 @@ int main() {
                 missile.move_over(terrain);
                 shot_in_progress = missile.flying;
                 if (!shot_in_progress) {
+                    missile.explode(window);
                     terrain.destroy(missile.get_position(), missile.get_radius() * 10);
 
                     int i = 0;
