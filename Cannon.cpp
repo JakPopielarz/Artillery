@@ -109,7 +109,7 @@ void Cannon::fall() {
         destroy();
 }
 
-void Cannon::rotate_barrel(const side side) {
+void Cannon::rotate_barrel(const side& side) {
     if (side.direction == "up" and barrel.getRotation() > BARREL_MIN_ROTATION)
         barrel.rotate(side.vector.y*BARREL_ROTATION_AMOUNT);
     else if (side.direction == "down") {

@@ -61,7 +61,7 @@ public:
     bool is_on(Terrain);
     void move_on(Terrain terrain, side side, float amount);
     void fall();
-    void rotate_barrel(side side);
+    void rotate_barrel(const side& side);
     bool in_explosion(sf::Vector2f location, float radius);
     bool out_of_screen();
     Missile destroy();
