@@ -39,8 +39,6 @@ private:
     int hit_points_int;
     sf::RectangleShape cannon;
     sf::RectangleShape barrel;
-    float width;
-    float height;
     float fall_velocity;
     float shot_strength;
 public:
@@ -65,6 +63,7 @@ public:
     void fall();
     void rotate_barrel(side side);
     bool in_explosion(sf::Vector2f location, float radius);
+    bool out_of_screen();
     Missile destroy();
 };
 

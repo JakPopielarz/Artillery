@@ -24,7 +24,7 @@ float distance(sf::Vector2f point1, sf::Vector2f point2) {
 }
 
 Cannon::Cannon(sf::Vector2f position, sf::Color colour, string nick) {
-    name = nick;
+    name = move(nick);
     fall_velocity = 0;
     shot_strength = 50;
 
@@ -68,7 +68,7 @@ Missile Cannon::shoot(float wind_strength) {
 
 bool Cannon::is_on(Terrain terrain) {
     sf::VertexArray vertices = terrain.get_vertices();
-    for (float i=cannon.getPosition().x; i<=cannon.getPosition().x+cannon.getSize().x; i++){
+    for (int i=cannon.getPosition().x; i<=int(cannon.getPosition().x+cannon.getSize().x); i++){
         if (cannon.getPosition().y+cannon.getSize().y >= vertices[i].position.y)
             return true;
     }
@@ -109,7 +109,7 @@ void Cannon::fall() {
         destroy();
 }
 
-void Cannon::rotate_barrel(side side) {
+void Cannon::rotate_barrel(const side side) {
     if (side.direction == "up" and barrel.getRotation() > BARREL_MIN_ROTATION)
         barrel.rotate(side.vector.y*BARREL_ROTATION_AMOUNT);
     else if (side.direction == "down") {
@@ -142,6 +142,11 @@ Missile Cannon::destroy() {
     cannon.setPosition(-1000, -1000);
     barrel.setPosition(-1000, -1000);
 
-    Missile phantom = Missile(cannon_center, sf::Vector2f(0,0), 0, CANNON_EXPLOSION_SIZE, sf::Color::Transparent);
+    Missile phantom = Missile(cannon_center, sf::Vector2f(0,-20), 0, CANNON_EXPLOSION_SIZE, sf::Color::Transparent);
     return phantom;
+}
+
+bool Cannon::out_of_screen() {
+    return (cannon.getPosition().x < -WINDOW_MARGIN/2 || cannon.getPosition().x+CANNON_SIZE.x > WINDOW_WIDTH+WINDOW_MARGIN/2 ||
+            cannon.getPosition().y < -WINDOW_MARGIN/2 || cannon.getPosition().y+CANNON_SIZE.y > WINDOW_HEIGHT+WINDOW_MARGIN/2);
 }

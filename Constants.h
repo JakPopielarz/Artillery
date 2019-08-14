@@ -22,5 +22,6 @@ const sf::Vector2f WIND_TEXT_POSITION = sf::Vector2f(WINDOW_WIDTH/2.f, WINDOW_MA
 const unsigned int WIND_CHAR_SIZE = 10;
 const int MAX_WIND_STRENGTH = 10;
 const float MISSILE_EXPLOSION_INCREMENT = 0.15;
+const float WIND_IMPACT_ON_FLIGHT = 0.0015;
 
 #endif //ARTILLERY_CONSTANTS_H

@@ -32,7 +32,7 @@ public:
     void reset();
     bool check_flying_over(Terrain& terrain);
     void explode(sf::RenderWindow& window);
-    bool in_screen();
+    bool on_screen();
 };
 
 #endif //ARTILLERY_MISSILE_H
