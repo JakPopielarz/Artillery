@@ -26,13 +26,17 @@ void Missile::draw(sf::RenderWindow &window) {
     window.draw(missile);
 }
 
-void Missile::move_over(Terrain& terrain) {
+void Missile::move_over(Terrain &terrain, vector<Cannon*>& cannons) {
     sf::Vector2f new_position = sf::Vector2f(missile.getPosition().x+velocity.x/10, missile.getPosition().y-velocity.y/10);
     missile.setPosition(new_position);
     velocity.y -= GRAVITY_SPEED;
     velocity.x += wind_strength*WIND_IMPACT_ON_FLIGHT;
 
+    bool collided;
     flying = check_flying_over(terrain);
+    collided = check_collision_with(cannons);
+    if (collided)
+        flying = false;
 }
 
 bool Missile::check_flying_over(Terrain &terrain) {
@@ -43,9 +47,24 @@ bool Missile::check_flying_over(Terrain &terrain) {
             missile.getPosition().y > 0 && missile.getPosition().y < WINDOW_HEIGHT);
 }
 
+bool Missile::check_collision_with(vector<Cannon*>& cannons) {
+    for (auto cannon : cannons) {
+        if (in_cannon(cannon))
+            return true;
+    }
+    return  false;
+}
+
+bool Missile::in_cannon(Cannon *cannon) {
+    sf::Vector2f position = missile.getPosition();
+    return (position.x > cannon->get_position().x && position.x < cannon->get_position().x+CANNON_SIZE.x &&
+            position.y > cannon->get_position().y && position.y < cannon->get_position().y+CANNON_SIZE.y);
+}
+
 void Missile::reset() {
     velocity = sf::Vector2f(0,0);
     missile.setPosition(-1000, -1000);
+    wind_strength = 0;
     flying = false;
 }
 

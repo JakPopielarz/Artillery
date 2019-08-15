@@ -2,6 +2,7 @@
 #include <string>
 #include <SFML/Graphics.hpp>
 #include "Cannon.h"
+#include "Missile.h"
 #include "Terrain.h"
 #include "EndScreen.h"
 #include "InGameUI.h"
@@ -34,12 +35,15 @@ bool cannon_hit(Cannon* cannon, Missile missile) {
     return (cannon->in_explosion(missile.get_position(), missile.get_radius() * 10));
 }
 
-void handle_cannon_hit(vector<Cannon *> *cannons, int i, Missile *missile) {
+void handle_cannon_hit(vector<Cannon *> *cannons, int i, Missile *missile, float wind) {
     Cannon* cannon = (*cannons)[i];
     cannon->lower_hp(int(missile->get_radius() * 8));
 
     if (cannon->get_hp() <= 0 and cannon->get_position().x >= 0) {
-        *missile = cannon->destroy();
+        missile->set_position(cannon->destroy());
+        missile->set_velocity(sf::Vector2f(0,-20));
+        missile->set_color(sf::Color::Transparent);
+        missile->set_wind(0);
         missile->flying = true;
         cannons->erase(cannons->begin() + i);
     }
@@ -85,7 +89,11 @@ int main() {
                 else if (event.key.code == sf::Keyboard::Down)
                     cannon->rotate_barrel(side("down"));
                 else if (event.key.code == sf::Keyboard::Space) {
-                    missile = cannon->shoot(wind_strength);
+                    vector<sf::Vector2f> missile_params = cannon->shoot();
+                    missile.set_position(missile_params[0]);
+                    missile.set_velocity(missile_params[1]);
+                    missile.set_wind(wind_strength);
+                    missile.set_color(sf::Color::Black);
                     missile.flying = true;
                 } else if (event.key.code == sf::Keyboard::A)
                     cannon->change_shot_strength(SHOT_STRENGTH_DELTA);
@@ -110,7 +118,7 @@ int main() {
 
             if (missile.flying) {
                 missile.draw(window);
-                missile.move_over(terrain);
+                missile.move_over(terrain, cannons);
 
                 if (!missile.flying) {
                     missile.explode(window);
@@ -119,7 +127,7 @@ int main() {
                     int i = 0;
                     while (i < cannons.size()) {
                         if (cannon_hit(cannons[i], missile))
-                            handle_cannon_hit(&cannons, i, &missile);
+                            handle_cannon_hit(&cannons, i, &missile, wind_strength);
                         if (cannons[i]->out_of_screen())
                             cannons.erase(cannons.begin() + i);
                         i += 1;

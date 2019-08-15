@@ -7,7 +7,6 @@
 
 #include <iostream>
 #include <SFML/Graphics.hpp>
-#include "Missile.h"
 #include "Terrain.h"
 
 using namespace std;
@@ -56,7 +55,7 @@ public:
     float get_shot_strength() { return shot_strength; }
     void change_shot_strength(float amount);
     sf::Color get_color() { return cannon.getFillColor(); }
-    Missile shoot(float wind_strength);
+    vector<sf::Vector2f> shoot();
     void draw(sf::RenderWindow& window);
     bool is_on(Terrain);
     void move_on(Terrain terrain, side side, float amount);
@@ -64,7 +63,7 @@ public:
     void rotate_barrel(const side& side);
     bool in_explosion(sf::Vector2f location, float radius);
     bool out_of_screen();
-    Missile destroy();
+    sf::Vector2f destroy();
 };
 
 

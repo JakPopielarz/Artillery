@@ -54,7 +54,7 @@ void Cannon::change_shot_strength(float amount) {
         shot_strength = min(shot_strength+amount, 100);
 }
 
-Missile Cannon::shoot(float wind_strength) {
+vector<sf::Vector2f> Cannon::shoot() {
     sf::Vector2f missile_velocity;
     float rotation_degrees = 360-barrel.getRotation();
     float rotation_radians = rotation_degrees * float(M_PI/180);
@@ -66,8 +66,10 @@ Missile Cannon::shoot(float wind_strength) {
     missile_coords.x = cos(rotation_radians) * barrel.getSize().x + barrel.getPosition().x;
     missile_coords.y = -sin(rotation_radians) * barrel.getSize().x + barrel.getPosition().y;
 
-    Missile missile = Missile(missile_coords, missile_velocity, wind_strength);
-    return missile;
+    vector<sf::Vector2f> missile_params;
+    missile_params.emplace_back(missile_coords);
+    missile_params.emplace_back(missile_velocity);
+    return missile_params;
 }
 
 bool Cannon::is_on(Terrain terrain) {
@@ -138,7 +140,7 @@ void Cannon::lower_hp(int amount) {
         hit_points_int = 0;
 }
 
-Missile Cannon::destroy() {
+sf::Vector2f Cannon::destroy() {
     hit_points_int = 0;
     sf::Vector2f cannon_center = cannon.getPosition();
     cannon_center.x += cannon.getSize().x/2;
@@ -146,8 +148,7 @@ Missile Cannon::destroy() {
     cannon.setPosition(-1000, -1000);
     barrel.setPosition(-1000, -1000);
 
-    Missile phantom = Missile(cannon_center, sf::Vector2f(0,-20), 0, CANNON_EXPLOSION_SIZE, sf::Color::Transparent);
-    return phantom;
+    return cannon_center;
 }
 
 bool Cannon::out_of_screen() {

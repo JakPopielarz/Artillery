@@ -7,7 +7,7 @@ const unsigned int WINDOW_WIDTH = 800;
 const unsigned int WINDOW_HEIGHT = 600;
 const float WINDOW_MARGIN = 10;
 
-const float MAX_FALL_VELOCITY = 0.9f;
+const float  MAX_FALL_VELOCITY = 0.9f;
 const float GRAVITY_SPEED = 0.03f;
 
 const sf::Vector2f CANNON_SIZE(16,10);

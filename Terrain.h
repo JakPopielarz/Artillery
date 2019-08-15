@@ -2,7 +2,7 @@
 #define ARTILLERY_TERRAIN_H
 
 #include <vector>
-#include <math.h>
+#include <cmath>
 #include <SFML/Graphics.hpp>
 #include "Constants.h"
 

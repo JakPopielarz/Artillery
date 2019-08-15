@@ -11,6 +11,9 @@
 #include <cmath>
 #include "Constants.h"
 #include "Terrain.h"
+#include "Cannon.h"
+
+using namespace std;
 
 class Missile {
 private:
@@ -27,10 +30,14 @@ public:
     float get_radius() { return  missile.getRadius(); };
     void set_position(sf::Vector2f new_position) { missile.setPosition(new_position); }
     void set_velocity(sf::Vector2f new_velocity) { velocity=new_velocity; }
+    void set_color(sf::Color color) { missile.setFillColor(color); }
+    void set_wind(float wind) { wind_strength = wind; }
     void draw(sf::RenderWindow& window);
-    void move_over(Terrain& terrain);
-    void reset();
+    void move_over(Terrain& terrain, vector<Cannon*>& cannons);
     bool check_flying_over(Terrain& terrain);
+    bool check_collision_with(vector<Cannon*>& cannons);
+    bool in_cannon(Cannon* cannon);
+    void reset();
     void explode(sf::RenderWindow& window);
     bool on_screen();
 };
