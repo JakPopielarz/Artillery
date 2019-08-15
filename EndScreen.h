@@ -17,7 +17,7 @@ private:
     sf::Text header;
     sf::Text follow_up;
 public:
-    explicit EndScreen(const string winner, sf::Color color=sf::Color::Black);
+    explicit EndScreen(const string& winner, sf::Color color=sf::Color::Black);
     void draw(sf::RenderWindow& window);
 };
 

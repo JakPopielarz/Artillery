@@ -1,7 +1,7 @@
 #include "Terrain.h"
 
-float get_y(int i, int mod, float phase) {
-    return float(WINDOW_HEIGHT-mod*1.5 - float(mod*sin(phase*M_1_PI + (i * mod*0.0001))));
+float get_y(unsigned long i, int mod, float phase) {
+    return float(WINDOW_HEIGHT-mod*1.5 - float(mod*sin(phase*M_1_PI + (double(i) * mod*0.0001))));
 }
 
 sf::VertexArray generate_vertices(float density, sf::Color color) {
@@ -10,8 +10,8 @@ sf::VertexArray generate_vertices(float density, sf::Color color) {
 
     int mod = rand() % (150 - 80 + 1) + 80;
     float phase = ((float) rand()) / (float) 2;
-    for(int i=1; i<number; i++) {
-        vertices[i].position = sf::Vector2f(i/density, get_y(i, mod, phase));
+    for(unsigned long i=1; i<number; i++) {
+        vertices[i].position = sf::Vector2f(float(i)/density, get_y(i, mod, phase));
         vertices[i].color = color;
         if (vertices[i].position.y > WINDOW_HEIGHT)
             vertices[i].position.y = WINDOW_HEIGHT;
@@ -50,7 +50,7 @@ void Terrain::create_texture() {
     image.create(WINDOW_WIDTH, WINDOW_HEIGHT, sf::Color(0,0,0,0));
     for (unsigned int i=0; i<WINDOW_HEIGHT; i++){
         for (unsigned int j=0; j<WINDOW_WIDTH; j++) {
-            if (i > terrain[j].position.y)
+            if (i > int(terrain[j].position.y))
                 image.setPixel(j, i, color);
         }
     }
@@ -65,7 +65,7 @@ void Terrain::create_sprite() {
 void Terrain::destroy(sf::Vector2f location, float radius) {
     for (int i=int(fmax(location.x-radius, 0)); i<=fmin(location.x+radius, WINDOW_WIDTH); i++) {
         float new_y = terrain[i].position.y + location.y - terrain[i].position.y +
-                + sqrt(radius * radius - (i - location.x) * (i - location.x));
+                + sqrt(radius * radius - (float(i) - location.x) * (float(i) - location.x));
         terrain[i].position.y = fmax(new_y, terrain[i].position.y);
     }
 

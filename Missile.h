@@ -8,7 +8,7 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include <vector>
-#include <math.h>
+#include <cmath>
 #include "Constants.h"
 #include "Terrain.h"
 

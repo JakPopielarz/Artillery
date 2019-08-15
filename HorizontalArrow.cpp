@@ -11,7 +11,7 @@ HorizontalArrow::HorizontalArrow(float length, sf::Vector2f position) {
 
     tip = sf::CircleShape(WIND_ARROW_WIDTH*3, 3);
     tip.setOrigin(tip.getOrigin().x+tip.getRadius(), tip.getOrigin().y+tip.getRadius());
-    tip.rotate(90*(length/abs(length)));
+    tip.rotate(90*(length/std::abs(length)));
     tip.setPosition(stem.getPosition().x+length, stem.getPosition().y+WIND_ARROW_WIDTH/2);
     tip.setFillColor(sf::Color::Black);
 }

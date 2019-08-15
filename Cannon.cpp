@@ -62,7 +62,11 @@ Missile Cannon::shoot(float wind_strength) {
     missile_velocity.x = cos(rotation_radians) * MAX_SHOT_STRENGTH * shot_strength / 100;
     missile_velocity.y = sin(rotation_radians) * MAX_SHOT_STRENGTH * shot_strength / 100;
 
-    Missile missile = Missile(barrel.getPosition(), missile_velocity, wind_strength);
+    sf::Vector2f missile_coords;
+    missile_coords.x = cos(rotation_radians) * barrel.getSize().x + barrel.getPosition().x;
+    missile_coords.y = -sin(rotation_radians) * barrel.getSize().x + barrel.getPosition().y;
+
+    Missile missile = Missile(missile_coords, missile_velocity, wind_strength);
     return missile;
 }
 

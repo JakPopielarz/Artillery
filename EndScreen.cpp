@@ -6,7 +6,7 @@
 
 using namespace std;
 
-EndScreen::EndScreen(const string winner, sf::Color color) {
+EndScreen::EndScreen(const string& winner, sf::Color color) {
     if (!font.loadFromFile("../Resources/Fonts/ALoveofThunder.ttf")) {
         cout << "Error loading font from file" << endl;
         system("pause");

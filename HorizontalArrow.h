@@ -6,7 +6,7 @@
 #ifndef ARTILLERY_HORIZONTALARROW_H
 #define ARTILLERY_HORIZONTALARROW_H
 
-#include <math.h>
+#include <cmath>
 #include "SFML/Graphics.hpp"
 #include "Constants.h"
 
