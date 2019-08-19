@@ -12,7 +12,7 @@ const float GRAVITY_SPEED = 0.03f;
 
 const sf::Vector2f CANNON_SIZE(16,10);
 const float CANNON_MOVE_AMOUNT = 0.5f;
-const float CANNON_EXPLOSION_SIZE = 5;
+const float CANNON_EXPLOSION_RADIUS = 5;
 const float MAX_MOVEMENT_ELEVATION = 3;
 
 const float BARREL_ROTATION_AMOUNT = 2.5f;

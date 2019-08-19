@@ -27,25 +27,52 @@ float generate_wind() {
     return float(rand() % ((2*MAX_WIND_STRENGTH + 1) - MAX_WIND_STRENGTH));
 }
 
-bool check_if_processing(bool missile_flying, vector<Cannon*>* cannons) {
+bool check_if_game_in_progress(bool missile_flying, vector<Cannon*>* cannons) {
     return (!missile_flying and cannons->size() > 1);
 }
 
-bool cannon_hit(Cannon* cannon, Missile missile) {
-    return (cannon->in_explosion(missile.get_position(), missile.get_radius() * 10));
+void check_cannon_events(sf::Event& event, Cannon* cannon, Terrain* terrain, Missile* missile, float *wind_strength) {
+    if (event.key.code == sf::Keyboard::Left)
+        cannon->move_on(terrain, side("left"), CANNON_MOVE_AMOUNT);
+    else if (event.key.code == sf::Keyboard::Right)
+        cannon->move_on(terrain, side("right"), CANNON_MOVE_AMOUNT);
+    else if (event.key.code == sf::Keyboard::Up)
+        cannon->rotate_barrel(side("up"));
+    else if (event.key.code == sf::Keyboard::Down)
+        cannon->rotate_barrel(side("down"));
+    else if (event.key.code == sf::Keyboard::Space) {
+        missile->set_parameters(cannon->shoot(wind_strength), sf::Color::Black);
+    } else if (event.key.code == sf::Keyboard::A)
+        cannon->change_shot_strength(SHOT_STRENGTH_DELTA);
+    else if (event.key.code == sf::Keyboard::Z)
+        cannon->change_shot_strength(-SHOT_STRENGTH_DELTA);
 }
 
-void handle_cannon_hit(vector<Cannon *> *cannons, int i, Missile *missile, float wind) {
-    Cannon* cannon = (*cannons)[i];
+bool cannon_hit(Cannon* cannon, Missile* missile) {
+    return (cannon->in_explosion(missile->get_position(), missile->get_radius() * 10));
+}
+
+void handle_cannon_hit(vector<Cannon *> &cannons, int i, Missile *missile) {
+    Cannon* cannon = cannons[i];
     cannon->lower_hp(int(missile->get_radius() * 8));
 
     if (cannon->get_hp() <= 0 and cannon->get_position().x >= 0) {
-        missile->set_position(cannon->destroy());
-        missile->set_velocity(sf::Vector2f(0,-20));
-        missile->set_color(sf::Color::Transparent);
-        missile->set_wind(0);
-        missile->flying = true;
-        cannons->erase(cannons->begin() + i);
+        missile->set_parameters(cannon->destroy(), sf::Color::Transparent);
+        cannons.erase(cannons.begin() + i);
+    }
+}
+
+void handle_destruction(sf::RenderWindow &window, vector<Cannon *> &cannons, Missile *missile, Terrain *terrain) {
+    missile->explode(window);
+    terrain->destroy(missile->get_position(), missile->get_radius() * 10);
+
+    int i = 0;
+    while (i < cannons.size()) {
+        if (cannon_hit(cannons[i], missile))
+            handle_cannon_hit(cannons, i, missile);
+        if (cannons[i]->out_of_screen())
+            cannons.erase(cannons.begin() + i);
+        i += 1;
     }
 }
 
@@ -61,16 +88,16 @@ int main() {
     cannons.emplace_back(new Cannon(generate_spawn_point_on(terrain), sf::Color::Magenta, "Magenta"));
     cannons.emplace_back(new Cannon(generate_spawn_point_on(terrain), sf::Color::Green, "Green"));
     cannons.emplace_back(new Cannon(generate_spawn_point_on(terrain), sf::Color::Yellow, "Yellow"));
-    cannons.emplace_back(new Cannon(generate_spawn_point_on(terrain), sf::Color::Black, "Black"));
+    //cannons.emplace_back(new Cannon(generate_spawn_point_on(terrain), sf::Color::Black, "Black"));
     Cannon* cannon;
     Missile missile;
-    bool processing;
+    bool game_in_progress;
     int turn = 0;
     float wind_strength = generate_wind();
 
     while (window.isOpen())
     {
-        processing = check_if_processing(missile.flying, &cannons);
+        game_in_progress = check_if_game_in_progress(missile.flying, &cannons);
 
         sf::Event event;
 
@@ -78,27 +105,9 @@ int main() {
         {
             if (event.type == sf::Event::Closed)
                 window.close();
-            else if (event.type == sf::Event::KeyPressed and processing) {
+            else if (event.type == sf::Event::KeyPressed and game_in_progress) {
                 cannon = cannons[turn];
-                if (event.key.code == sf::Keyboard::Left)
-                    cannon->move_on(terrain, side("left"), CANNON_MOVE_AMOUNT);
-                else if (event.key.code == sf::Keyboard::Right)
-                    cannon->move_on(terrain, side("right"), CANNON_MOVE_AMOUNT);
-                else if (event.key.code == sf::Keyboard::Up)
-                    cannon->rotate_barrel(side("up"));
-                else if (event.key.code == sf::Keyboard::Down)
-                    cannon->rotate_barrel(side("down"));
-                else if (event.key.code == sf::Keyboard::Space) {
-                    vector<sf::Vector2f> missile_params = cannon->shoot();
-                    missile.set_position(missile_params[0]);
-                    missile.set_velocity(missile_params[1]);
-                    missile.set_wind(wind_strength);
-                    missile.set_color(sf::Color::Black);
-                    missile.flying = true;
-                } else if (event.key.code == sf::Keyboard::A)
-                    cannon->change_shot_strength(SHOT_STRENGTH_DELTA);
-                else if (event.key.code == sf::Keyboard::Z)
-                    cannon->change_shot_strength(-SHOT_STRENGTH_DELTA);
+                check_cannon_events(event, cannon, &terrain, &missile, &wind_strength);
             }
         }
 
@@ -121,17 +130,7 @@ int main() {
                 missile.move_over(terrain, cannons);
 
                 if (!missile.flying) {
-                    missile.explode(window);
-                    terrain.destroy(missile.get_position(), missile.get_radius() * 10);
-
-                    int i = 0;
-                    while (i < cannons.size()) {
-                        if (cannon_hit(cannons[i], missile))
-                            handle_cannon_hit(&cannons, i, &missile, wind_strength);
-                        if (cannons[i]->out_of_screen())
-                            cannons.erase(cannons.begin() + i);
-                        i += 1;
-                    }
+                    handle_destruction(window, cannons, &missile, &terrain);
 
                     if (!missile.flying) {
                         missile.reset();

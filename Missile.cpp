@@ -88,3 +88,12 @@ bool Missile::on_screen() {
     return (missile.getPosition().x > 0 && missile.getPosition().x < WINDOW_WIDTH &&
             missile.getPosition().y > 0 && missile.getPosition().y < WINDOW_HEIGHT);
 }
+
+void Missile::set_parameters(map<string, sf::Vector2f> parameters, sf::Color color) {
+    set_position(parameters["coords"]);
+    set_velocity(parameters["velocity"]);
+    set_wind(parameters["wind"].x);
+    missile.setRadius(parameters["radius"].x);
+    set_color(color);
+    flying = true;
+}

@@ -9,6 +9,7 @@
 #include <iostream>
 #include <vector>
 #include <cmath>
+#include <map>
 #include "Constants.h"
 #include "Terrain.h"
 #include "Cannon.h"
@@ -32,6 +33,7 @@ public:
     void set_velocity(sf::Vector2f new_velocity) { velocity=new_velocity; }
     void set_color(sf::Color color) { missile.setFillColor(color); }
     void set_wind(float wind) { wind_strength = wind; }
+    void set_parameters(map<string, sf::Vector2f> parameters, sf::Color color);
     void draw(sf::RenderWindow& window);
     void move_over(Terrain& terrain, vector<Cannon*>& cannons);
     bool check_flying_over(Terrain& terrain);

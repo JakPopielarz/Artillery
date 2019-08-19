@@ -54,7 +54,7 @@ void Cannon::change_shot_strength(float amount) {
         shot_strength = min(shot_strength+amount, 100);
 }
 
-vector<sf::Vector2f> Cannon::shoot() {
+map<string, sf::Vector2f> Cannon::shoot(const float *wind_strength) {
     sf::Vector2f missile_velocity;
     float rotation_degrees = 360-barrel.getRotation();
     float rotation_radians = rotation_degrees * float(M_PI/180);
@@ -66,9 +66,12 @@ vector<sf::Vector2f> Cannon::shoot() {
     missile_coords.x = cos(rotation_radians) * barrel.getSize().x + barrel.getPosition().x;
     missile_coords.y = -sin(rotation_radians) * barrel.getSize().x + barrel.getPosition().y;
 
-    vector<sf::Vector2f> missile_params;
-    missile_params.emplace_back(missile_coords);
-    missile_params.emplace_back(missile_velocity);
+    map<string, sf::Vector2f> missile_params = {
+            {"coords", missile_coords},
+            {"velocity", missile_velocity},
+            {"wind", sf::Vector2f(*wind_strength, 0)},
+            {"radius", sf::Vector2f(2, 0)}
+    };
     return missile_params;
 }
 
@@ -81,12 +84,13 @@ bool Cannon::is_on(Terrain terrain) {
     return false;
 }
 
-void Cannon::move_on(Terrain terrain, side side, float amount) {
+void Cannon::move_on(Terrain* terrain, side side, float amount) {
     sf::Vector2f displacement = side.get_vector() * amount;
-    sf::VertexArray vertices = terrain.get_vertices();
+    sf::VertexArray vertices = terrain->get_vertices();
 
     float offset = 0;
     size_t index;
+
     if (side.direction == "right")
         index = size_t(cannon.getPosition().x+displacement.x+cannon.getSize().x);
     else
@@ -140,7 +144,7 @@ void Cannon::lower_hp(int amount) {
         hit_points_int = 0;
 }
 
-sf::Vector2f Cannon::destroy() {
+map<string, sf::Vector2f> Cannon::destroy() {
     hit_points_int = 0;
     sf::Vector2f cannon_center = cannon.getPosition();
     cannon_center.x += cannon.getSize().x/2;
@@ -148,7 +152,14 @@ sf::Vector2f Cannon::destroy() {
     cannon.setPosition(-1000, -1000);
     barrel.setPosition(-1000, -1000);
 
-    return cannon_center;
+    map<string, sf::Vector2f> parameters = {
+            {"coords", cannon_center},
+            {"velocity", sf::Vector2f(0,-20)},
+            {"wind", sf::Vector2f(0, 0)},
+            {"radius", sf::Vector2f(CANNON_EXPLOSION_RADIUS, 0)}
+    };
+
+    return parameters;
 }
 
 bool Cannon::out_of_screen() {
