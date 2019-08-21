@@ -25,7 +25,7 @@ public:
     bool flying = false;
 
     Missile();
-    Missile(sf::Vector2f starting_position, sf::Vector2f starting_velocity, float wind=0, float size=2, sf::Color color=sf::Color::Black);
+    Missile(map<string, sf::Vector2f> parameters, sf::Color color) { set_parameters(parameters, color); }
     sf::Vector2f get_position() { return missile.getPosition(); };
     sf::Vector2f get_velocity() { return velocity; };
     float get_radius() { return  missile.getRadius(); };
@@ -33,7 +33,7 @@ public:
     void set_velocity(sf::Vector2f new_velocity) { velocity=new_velocity; }
     void set_color(sf::Color color) { missile.setFillColor(color); }
     void set_wind(float wind) { wind_strength = wind; }
-    void set_parameters(map<string, sf::Vector2f> parameters, sf::Color color);
+    void set_parameters(map<string, sf::Vector2f>& parameters, sf::Color color);
     void draw(sf::RenderWindow& window);
     void move_over(Terrain& terrain, vector<Cannon*>& cannons);
     bool check_flying_over(Terrain& terrain);

@@ -13,15 +13,6 @@ Missile::Missile() {
     missile.setFillColor(sf::Color::Black);
 }
 
-Missile::Missile(sf::Vector2f starting_position, sf::Vector2f starting_velocity, float wind, float size, sf::Color color) {
-    wind_strength = wind;
-    velocity = starting_velocity;
-    missile.setRadius(size);
-    missile.setOrigin(missile.getRadius(), missile.getRadius());
-    missile.setPosition(starting_position);
-    missile.setFillColor(color);
-}
-
 void Missile::draw(sf::RenderWindow &window) {
     window.draw(missile);
 }
@@ -89,7 +80,7 @@ bool Missile::on_screen() {
             missile.getPosition().y > 0 && missile.getPosition().y < WINDOW_HEIGHT);
 }
 
-void Missile::set_parameters(map<string, sf::Vector2f> parameters, sf::Color color) {
+void Missile::set_parameters(map<string, sf::Vector2f>& parameters, sf::Color color) {
     set_position(parameters["coords"]);
     set_velocity(parameters["velocity"]);
     set_wind(parameters["wind"].x);

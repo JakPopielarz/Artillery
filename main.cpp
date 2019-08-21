@@ -41,7 +41,8 @@ void check_cannon_events(sf::Event& event, Cannon* cannon, Terrain* terrain, Mis
     else if (event.key.code == sf::Keyboard::Down)
         cannon->rotate_barrel(side("down"));
     else if (event.key.code == sf::Keyboard::Space) {
-        missile->set_parameters(cannon->shoot(wind_strength), sf::Color::Black);
+        map<string, sf::Vector2f> parameters = cannon->shoot(wind_strength);
+        missile->set_parameters(parameters, sf::Color::Black);
     } else if (event.key.code == sf::Keyboard::A)
         cannon->change_shot_strength(SHOT_STRENGTH_DELTA);
     else if (event.key.code == sf::Keyboard::Z)
@@ -52,12 +53,18 @@ bool cannon_hit(Cannon* cannon, Missile* missile) {
     return (cannon->in_explosion(missile->get_position(), missile->get_radius() * 10));
 }
 
-void handle_cannon_hit(vector<Cannon *> &cannons, int i, Missile *missile) {
+void handle_cannon_hit(sf::RenderWindow &window, vector<Cannon *> &cannons, int i, Missile *missile, Terrain *terrain) {
     Cannon* cannon = cannons[i];
     cannon->lower_hp(int(missile->get_radius() * 8));
 
     if (cannon->get_hp() <= 0 and cannon->get_position().x >= 0) {
-        missile->set_parameters(cannon->destroy(), sf::Color::Transparent);
+        map<string, sf::Vector2f> parameters = cannon->destroy();
+
+        auto* phantom = new Missile(parameters, sf::Color::Transparent);
+        phantom->explode(window);
+        terrain->destroy(phantom->get_position(), phantom->get_radius() * 10);
+        delete phantom;
+
         cannons.erase(cannons.begin() + i);
     }
 }
@@ -69,12 +76,57 @@ void handle_destruction(sf::RenderWindow &window, vector<Cannon *> &cannons, Mis
     int i = 0;
     while (i < cannons.size()) {
         if (cannon_hit(cannons[i], missile))
-            handle_cannon_hit(cannons, i, missile);
+            handle_cannon_hit(window, cannons, i, missile, terrain);
         if (cannons[i]->out_of_screen())
             cannons.erase(cannons.begin() + i);
         i += 1;
     }
 }
+
+void new_round(Missile* missile, float* wind_strength, int* turn, vector<Cannon*>* cannons) {
+    missile->reset();
+    *wind_strength = generate_wind();
+    *turn += 1;
+    if (*turn >= cannons->size())
+        *turn = 0;
+}
+
+void run_game(sf::RenderWindow& window, vector<Cannon*>& cannons, int& turn, float& wind_strength, Terrain& terrain, Missile& missile) {
+    Cannon* cannon;
+    if (cannons.size() > 1) {
+        cannon = cannons[turn];
+        InGameUI UI = InGameUI(cannon, wind_strength);
+
+        window.clear(BACKGROUND_COLOR);
+        terrain.draw(window);
+        UI.draw(window);
+
+        for (auto i: cannons) {
+            if (!i->is_on(terrain) && i->get_hp() > 0)
+                i->fall();
+            i->draw(window);
+        }
+
+        if (missile.flying) {
+            missile.draw(window);
+            missile.move_over(terrain, cannons);
+
+            if (!missile.flying) {
+                handle_destruction(window, cannons, &missile, &terrain);
+
+                new_round(&missile, &wind_strength, &turn, &cannons);
+            }
+        }
+    } else if (cannons.size() == 1) {
+        Cannon* winner = cannons[0];
+        EndScreen end(winner->name, winner->get_color());
+        end.draw(window);
+    } else {
+        EndScreen end("Noone! (DRAW)");
+        end.draw(window);
+    }
+}
+
 
 int main() {
     srand(time(nullptr));
@@ -111,45 +163,7 @@ int main() {
             }
         }
 
-        if (cannons.size() > 1) {
-            cannon = cannons[turn];
-            InGameUI UI = InGameUI(cannon, wind_strength);
-
-            window.clear(sf::Color(139, 194, 239));
-            terrain.draw(window);
-            UI.draw(window);
-
-            for (auto i: cannons) {
-                if (!i->is_on(terrain) && i->get_hp() > 0)
-                    i->fall();
-                i->draw(window);
-            }
-
-            if (missile.flying) {
-                missile.draw(window);
-                missile.move_over(terrain, cannons);
-
-                if (!missile.flying) {
-                    handle_destruction(window, cannons, &missile, &terrain);
-
-                    if (!missile.flying) {
-                        missile.reset();
-                        wind_strength = generate_wind();
-
-                        turn += 1;
-                        if (turn >= cannons.size())
-                            turn = 0;
-                    }
-                }
-            }
-        } else if (cannons.size() == 1) {
-            Cannon* winner = cannons[0];
-            EndScreen end(winner->name, winner->get_color());
-            end.draw(window);
-        } else {
-            EndScreen end("Noone! (DRAW)");
-            end.draw(window);
-        }
+        run_game(window, cannons, turn, wind_strength, terrain, missile);
 
         window.display();
     }
