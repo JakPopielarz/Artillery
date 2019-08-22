@@ -6,6 +6,7 @@
 #include "Terrain.h"
 #include "EndScreen.h"
 #include "InGameUI.h"
+#include "Menu.h"
 
 using namespace std;
 
@@ -27,8 +28,8 @@ float generate_wind() {
     return float(rand() % ((2*MAX_WIND_STRENGTH + 1) - MAX_WIND_STRENGTH));
 }
 
-bool check_if_game_in_progress(bool missile_flying, vector<Cannon*>* cannons) {
-    return (!missile_flying && cannons->size() > 1);
+bool check_if_round_in_progress(bool missile_flying, vector<Cannon*>* cannons) {
+    return (!missile_flying and cannons->size() > 1);
 }
 
 void check_cannon_events(sf::Event& event, Cannon* cannon, Terrain* terrain, Missile* missile, float *wind_strength) {
@@ -145,13 +146,17 @@ int main() {
     Cannon* cannon;
     Missile missile;
 
-    bool game_in_progress;
+    Menu menu;
+
+    bool round_in_progress;
+    bool game_started = false;
     int turn = 0;
     float wind_strength = generate_wind();
 
     while (window.isOpen())
     {
-        game_in_progress = check_if_game_in_progress(missile.flying, &cannons);
+        if (game_started)
+            round_in_progress = check_if_round_in_progress(missile.flying, &cannons);
 
         sf::Event event;
 
@@ -159,14 +164,18 @@ int main() {
         {
             if (event.type == sf::Event::Closed)
                 window.close();
-            else if (event.type == sf::Event::KeyPressed and game_in_progress) {
+            else if (event.type == sf::Event::KeyPressed && game_started && round_in_progress) {
                 cannon = cannons[turn];
                 check_cannon_events(event, cannon, &terrain, &missile, &wind_strength);
-            }
+            } else if (event.type == sf::Event::KeyPressed && !game_started &&
+                        event.key.code == sf::Keyboard::Enter)
+                game_started = true;
         }
 
-        if (game_in_progress)
+        if (game_started)
             run_game(window, cannons, turn, wind_strength, terrain, missile);
+        else
+            menu.draw(window);
 
         window.display();
     }

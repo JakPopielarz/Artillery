@@ -15,6 +15,7 @@ private:
     sf::Font font;
     sf::Text hit_points;
     sf::Text wind_text;
+    sf::Text nick;
     HorizontalArrow wind = HorizontalArrow(30, sf::Vector2f(-1000, -1000));
 public:
     explicit InGameUI(Cannon* cannon, float wind_strength);

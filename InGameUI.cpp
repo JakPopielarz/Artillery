@@ -27,6 +27,11 @@ InGameUI::InGameUI(Cannon* cannon, float wind_strength) {
 
     wind.set_length(wind_strength*10);
     wind.set_position(sf::Vector2f(WINDOW_WIDTH/2.f, WINDOW_MARGIN+20));
+
+    nick.setFont(font);
+    nick.setString(cannon->name);
+    nick.setPosition(WINDOW_MARGIN, WINDOW_MARGIN+hit_points.getCharacterSize()+WINDOW_MARGIN);
+    nick.setFillColor(cannon->get_color());
 }
 void InGameUI::draw(sf::RenderWindow &window) {
     draw_hit_points(window);
@@ -38,6 +43,7 @@ void InGameUI::draw_hit_points(sf::RenderWindow &window) {
     string hp_string = "HP: " + to_string(cannon->get_hp());
     hit_points.setString(hp_string);
     window.draw(hit_points);
+    window.draw(nick);
 }
 
 void InGameUI::draw_shot_strength(sf::RenderWindow &window) {
