@@ -137,12 +137,12 @@ int main() {
     sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Artillery", sf::Style::Default, settings);
 
     Terrain terrain;
-    vector<Cannon*> cannons = {
+    vector<Cannon*> cannons; /*= {
             new Cannon(generate_spawn_point_on(terrain), sf::Color::Magenta, "Magenta"),
             new Cannon(generate_spawn_point_on(terrain), sf::Color::Green, "Green"),
             new Cannon(generate_spawn_point_on(terrain), sf::Color::Yellow, "Yellow"),
             //new Cannon(generate_spawn_point_on(terrain), sf::Color::Black, "Black")
-    };
+    };*/
     Cannon* cannon;
     Missile missile;
 
@@ -154,16 +154,8 @@ int main() {
     float wind_strength = generate_wind();
 
 
-    std::string str;
-    sf::Text text;
-    sf::Font font;
-    if (!font.loadFromFile("../Resources/Fonts/ALoveofThunder.ttf")) {
-        cout << "Error loading font from file" << endl;
-        system("pause");
-    }
-
-    text.setFont(font);
-    text.setFillColor(sf::Color::Red);
+    string str;
+    string name;
     while (window.isOpen())
     {
         if (game_started)
@@ -180,11 +172,14 @@ int main() {
                 check_cannon_events(event, cannon, &terrain, &missile, &wind_strength);
             } else if (event.type == sf::Event::KeyPressed && !game_started &&
                         event.key.code == sf::Keyboard::Enter)
-                game_started = true;
+                menu.advance_step(game_started, cannons, name, generate_spawn_point_on(terrain));
             else if (event.type == sf::Event::TextEntered && !game_started) {
-                if (event.text.unicode > 49 && event.text.unicode < 58) {
+                if (event.text.unicode > 49 && event.text.unicode < 58 && !menu.chosen_number_of_players) {
                     str = static_cast<char>(event.text.unicode);
                     menu.set_number_of_players(str);
+                } else if (event.text.unicode < 128) {
+                    name += static_cast<char>(event.text.unicode);
+                    menu.update_name_fields(name);
                 }
             }
         }
@@ -192,10 +187,9 @@ int main() {
         if (game_started)
             run_game(window, cannons, turn, wind_strength, terrain, missile);
         else {
-            window.clear();
+            window.clear(BACKGROUND_COLOR);
             menu.draw(window);
         }
-        window.draw(text);
 
         window.display();
     }

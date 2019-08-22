@@ -33,6 +33,7 @@ InGameUI::InGameUI(Cannon* cannon, float wind_strength) {
     nick.setPosition(WINDOW_MARGIN, WINDOW_MARGIN+hit_points.getCharacterSize()+WINDOW_MARGIN);
     nick.setFillColor(cannon->get_color());
 }
+
 void InGameUI::draw(sf::RenderWindow &window) {
     draw_hit_points(window);
     draw_shot_strength(window);
