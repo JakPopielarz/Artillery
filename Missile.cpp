@@ -84,7 +84,7 @@ void Missile::set_parameters(map<string, sf::Vector2f>& parameters, sf::Color co
     set_position(parameters["coords"]);
     set_velocity(parameters["velocity"]);
     set_wind(parameters["wind"].x);
-    missile.setRadius(parameters["radius"].x);
     set_color(color);
+    missile.setRadius(parameters["radius"].x);
     flying = true;
 }

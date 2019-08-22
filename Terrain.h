@@ -6,7 +6,7 @@
 #include <SFML/Graphics.hpp>
 #include "Constants.h"
 
-class Terrain{
+class Terrain {
 private:
     sf::VertexArray terrain;
     sf::Texture texture;

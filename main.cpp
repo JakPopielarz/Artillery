@@ -28,7 +28,7 @@ float generate_wind() {
 }
 
 bool check_if_game_in_progress(bool missile_flying, vector<Cannon*>* cannons) {
-    return (!missile_flying and cannons->size() > 1);
+    return (!missile_flying && cannons->size() > 1);
 }
 
 void check_cannon_events(sf::Event& event, Cannon* cannon, Terrain* terrain, Missile* missile, float *wind_strength) {
@@ -136,13 +136,15 @@ int main() {
     sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Artillery", sf::Style::Default, settings);
 
     Terrain terrain;
-    vector<Cannon*> cannons;
-    cannons.emplace_back(new Cannon(generate_spawn_point_on(terrain), sf::Color::Magenta, "Magenta"));
-    cannons.emplace_back(new Cannon(generate_spawn_point_on(terrain), sf::Color::Green, "Green"));
-    cannons.emplace_back(new Cannon(generate_spawn_point_on(terrain), sf::Color::Yellow, "Yellow"));
-    //cannons.emplace_back(new Cannon(generate_spawn_point_on(terrain), sf::Color::Black, "Black"));
+    vector<Cannon*> cannons = {
+            new Cannon(generate_spawn_point_on(terrain), sf::Color::Magenta, "Magenta"),
+            new Cannon(generate_spawn_point_on(terrain), sf::Color::Green, "Green"),
+            new Cannon(generate_spawn_point_on(terrain), sf::Color::Yellow, "Yellow"),
+            //new Cannon(generate_spawn_point_on(terrain), sf::Color::Black, "Black")
+    };
     Cannon* cannon;
     Missile missile;
+
     bool game_in_progress;
     int turn = 0;
     float wind_strength = generate_wind();
@@ -163,7 +165,8 @@ int main() {
             }
         }
 
-        run_game(window, cannons, turn, wind_strength, terrain, missile);
+        if (game_in_progress)
+            run_game(window, cannons, turn, wind_strength, terrain, missile);
 
         window.display();
     }

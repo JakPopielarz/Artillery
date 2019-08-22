@@ -67,5 +67,4 @@ public:
     map<string, sf::Vector2f> destroy();
 };
 
-
 #endif //ARTILLERY_CANNON_H
