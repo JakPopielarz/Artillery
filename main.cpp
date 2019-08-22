@@ -148,11 +148,22 @@ int main() {
 
     Menu menu;
 
-    bool round_in_progress;
+    bool round_in_progress = false;
     bool game_started = false;
     int turn = 0;
     float wind_strength = generate_wind();
 
+
+    std::string str;
+    sf::Text text;
+    sf::Font font;
+    if (!font.loadFromFile("../Resources/Fonts/ALoveofThunder.ttf")) {
+        cout << "Error loading font from file" << endl;
+        system("pause");
+    }
+
+    text.setFont(font);
+    text.setFillColor(sf::Color::Red);
     while (window.isOpen())
     {
         if (game_started)
@@ -170,12 +181,21 @@ int main() {
             } else if (event.type == sf::Event::KeyPressed && !game_started &&
                         event.key.code == sf::Keyboard::Enter)
                 game_started = true;
+            else if (event.type == sf::Event::TextEntered && !game_started) {
+                if (event.text.unicode > 49 && event.text.unicode < 58) {
+                    str = static_cast<char>(event.text.unicode);
+                    menu.set_number_of_players(str);
+                }
+            }
         }
 
         if (game_started)
             run_game(window, cannons, turn, wind_strength, terrain, missile);
-        else
+        else {
+            window.clear();
             menu.draw(window);
+        }
+        window.draw(text);
 
         window.display();
     }

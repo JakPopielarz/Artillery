@@ -13,9 +13,12 @@ class Menu {
 private:
     sf::Font font;
     sf::Text controls;
+    sf::Text number_of_players_field;
+    int number_of_players;
 public:
     Menu();
     void draw(sf::RenderWindow& window);
+    void set_number_of_players(std::string& number);
 };
 
 

@@ -11,6 +11,8 @@ const sf::Color BACKGROUND_COLOR = sf::Color(139, 194, 239);
 const float  MAX_FALL_VELOCITY = 0.9f;
 const float GRAVITY_SPEED = 0.03f;
 
+const unsigned int MENU_CHARACTER_SIZE = 18;
+
 const sf::Vector2f CANNON_SIZE(16,10);
 const float CANNON_MOVE_AMOUNT = 0.5f;
 const float CANNON_EXPLOSION_RADIUS = 5;
