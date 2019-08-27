@@ -68,14 +68,15 @@ void Menu::set_enter_function_text(std::string function_text) {
 void Menu::advance_step(bool& game_started, vector<Cannon*>& cannons, string& player_name, sf::Vector2f spawn_point) {
     if(!chosen_number_of_players) {
         chosen_number_of_players = true;
-        set_enter_function_text("confirm player name");
+        set_enter_function_text("confirm player " + to_string(players_generated_count+1) + " name");
         create_name_fields();
     } else if (players_generated_count < number_of_players-2) {
         generate_player(cannons, spawn_point, player_name);
+        set_enter_function_text("confirm player " + to_string(players_generated_count+1) + " name");
         player_name = "";
     } else if (players_generated_count == number_of_players-2) {
-        set_enter_function_text("confirm player name\nand start game");
         generate_player(cannons, spawn_point, player_name);
+        set_enter_function_text("confirm player " + to_string(players_generated_count+1) + " name\nand start game");
         player_name = "";
     } else {
         generate_player(cannons, spawn_point, player_name);

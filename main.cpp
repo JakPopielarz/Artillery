@@ -137,12 +137,7 @@ int main() {
     sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Artillery", sf::Style::Default, settings);
 
     Terrain terrain;
-    vector<Cannon*> cannons; /*= {
-            new Cannon(generate_spawn_point_on(terrain), sf::Color::Magenta, "Magenta"),
-            new Cannon(generate_spawn_point_on(terrain), sf::Color::Green, "Green"),
-            new Cannon(generate_spawn_point_on(terrain), sf::Color::Yellow, "Yellow"),
-            //new Cannon(generate_spawn_point_on(terrain), sf::Color::Black, "Black")
-    };*/
+    vector<Cannon*> cannons;
     Cannon* cannon;
     Missile missile;
 
@@ -167,20 +162,29 @@ int main() {
         {
             if (event.type == sf::Event::Closed)
                 window.close();
-            else if (event.type == sf::Event::KeyPressed && game_started && round_in_progress) {
-                cannon = cannons[turn];
-                check_cannon_events(event, cannon, &terrain, &missile, &wind_strength);
-            } else if (event.type == sf::Event::KeyPressed && !game_started &&
-                        event.key.code == sf::Keyboard::Enter)
+
+            else if (event.type == sf::Event::KeyPressed && !game_started &&
+                     event.key.code == sf::Keyboard::Enter)
                 menu.advance_step(game_started, cannons, name, generate_spawn_point_on(terrain));
+
             else if (event.type == sf::Event::TextEntered && !game_started) {
                 if (event.text.unicode > 49 && event.text.unicode < 58 && !menu.chosen_number_of_players) {
                     str = static_cast<char>(event.text.unicode);
                     menu.set_number_of_players(str);
-                } else if (event.text.unicode < 128) {
-                    name += static_cast<char>(event.text.unicode);
-                    menu.update_name_fields(name);
+                } else if (event.text.unicode < 128 && menu.chosen_number_of_players) {
+                    if(event.text.unicode == 8 && !name.empty()) {
+                        name.resize(name.size() - 1);
+                        menu.update_name_fields(name);
+                    }
+                    else {
+                        name += static_cast<char>(event.text.unicode);
+                        menu.update_name_fields(name);
+                    }
                 }
+
+            } else if (event.type == sf::Event::KeyPressed && game_started && round_in_progress) {
+                cannon = cannons[turn];
+                check_cannon_events(event, cannon, &terrain, &missile, &wind_strength);
             }
         }
 

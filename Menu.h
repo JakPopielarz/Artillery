@@ -31,6 +31,7 @@ public:
     Menu();
     void draw(sf::RenderWindow& window);
     void display_name_fields(sf::RenderWindow& window);
+    int get_players_generated() { return players_generated_count == number_of_players; }
     void set_number_of_players(std::string& number);
     void set_enter_function_text(std::string function_text);
     void advance_step(bool& game_started, vector<Cannon*>& cannons, std::string& player_name, sf::Vector2f spawn_point);
