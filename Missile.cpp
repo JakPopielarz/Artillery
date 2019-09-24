@@ -86,5 +86,6 @@ void Missile::set_parameters(map<string, sf::Vector2f>& parameters, sf::Color co
     set_wind(parameters["wind"].x);
     set_color(color);
     missile.setRadius(parameters["radius"].x);
+    explosion_coefficient = parameters["explosion_coefficient"].x;
     flying = true;
 }

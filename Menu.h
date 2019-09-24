@@ -13,7 +13,6 @@
 
 class Menu {
 private:
-    std::string controls_string;
     sf::Font font;
     sf::Text controls;
     sf::Text number_of_players_field;

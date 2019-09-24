@@ -21,6 +21,7 @@ private:
     sf::CircleShape missile;
     sf::Vector2f velocity;
     float wind_strength;
+    float explosion_coefficient;
 public:
     bool flying = false;
 
@@ -29,6 +30,7 @@ public:
     sf::Vector2f get_position() { return missile.getPosition(); };
     sf::Vector2f get_velocity() { return velocity; };
     float get_radius() { return  missile.getRadius(); };
+    float get_explosion_radius() { return explosion_coefficient*get_radius(); }
     void set_position(sf::Vector2f new_position) { missile.setPosition(new_position); }
     void set_velocity(sf::Vector2f new_velocity) { velocity=new_velocity; }
     void set_color(sf::Color color) { missile.setFillColor(color); }

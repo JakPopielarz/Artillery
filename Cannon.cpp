@@ -54,7 +54,7 @@ void Cannon::change_shot_strength(float amount) {
         shot_strength = min(shot_strength+amount, 100);
 }
 
-map<string, sf::Vector2f> Cannon::shoot(const float *wind_strength) {
+map<string, sf::Vector2f> Cannon::get_missile_params(const float *wind_strength) {
     sf::Vector2f missile_velocity;
     float rotation_degrees = 360-barrel.getRotation();
     float rotation_radians = rotation_degrees * float(M_PI/180);
@@ -70,7 +70,8 @@ map<string, sf::Vector2f> Cannon::shoot(const float *wind_strength) {
             {"coords", missile_coords},
             {"velocity", missile_velocity},
             {"wind", sf::Vector2f(*wind_strength, 0)},
-            {"radius", sf::Vector2f(2, 0)}
+            {"radius", sf::Vector2f(2, 0)},
+            {"explosion_coefficient", sf::Vector2f(DEFAULT_EXPLOSION_COEFFICIENT, 0)}
     };
     return missile_params;
 }
@@ -116,7 +117,7 @@ void Cannon::fall() {
         fall_velocity += GRAVITY_SPEED;
 
     if (cannon.getPosition().y > WINDOW_HEIGHT)
-        destroy();
+        get_destruction_params();
 }
 
 void Cannon::rotate_barrel(const side& side) {
@@ -144,7 +145,7 @@ void Cannon::lower_hp(int amount) {
         hit_points_int = 0;
 }
 
-map<string, sf::Vector2f> Cannon::destroy() {
+map<string, sf::Vector2f> Cannon::get_destruction_params() {
     hit_points_int = 0;
     sf::Vector2f cannon_center = cannon.getPosition();
     cannon_center.x += cannon.getSize().x/2;
@@ -156,7 +157,8 @@ map<string, sf::Vector2f> Cannon::destroy() {
             {"coords", cannon_center},
             {"velocity", sf::Vector2f(0,-20)},
             {"wind", sf::Vector2f(0, 0)},
-            {"radius", sf::Vector2f(CANNON_EXPLOSION_RADIUS, 0)}
+            {"radius", sf::Vector2f(CANNON_EXPLOSION_RADIUS, 0)},
+            {"explosion_coefficient", sf::Vector2f(DEFAULT_EXPLOSION_COEFFICIENT, 0)}
     };
 
     return parameters;

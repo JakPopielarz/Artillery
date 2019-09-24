@@ -10,18 +10,6 @@ Menu::Menu() {
     chosen_number_of_players = false;
     players_generated_count = 0;
 
-    controls_string =
-            "CONTROLS\n\n"
-            "left and right arrow\n"
-            "move\n\n"
-            "up and down arrow\n"
-            "rotate barrel\n\n"
-            "a and z\n"
-            "adjust shot strength\n\n"
-            "space\n"
-            "shoot\n\n"
-            "enter\n";
-
     if (!font.loadFromFile("../Resources/Fonts/ALoveofThunder.ttf")) {
         cout << "Error loading font from file" << endl;
         system("pause");
@@ -29,7 +17,8 @@ Menu::Menu() {
 
     controls.setFont(font);
     controls.setFillColor(sf::Color::White);
-    controls.setString(controls_string +
+    controls.setString(CONTROLS_STRING +
+            "enter\n"
             "confirm number of players"
             );
     controls.setCharacterSize(MENU_CHARACTER_SIZE);
@@ -62,7 +51,7 @@ void Menu::set_number_of_players(std::string& number) {
 }
 
 void Menu::set_enter_function_text(std::string function_text) {
-    controls.setString(controls_string + function_text);
+    controls.setString(CONTROLS_STRING + "enter\n" + function_text);
 }
 
 void Menu::advance_step(bool& game_started, vector<Cannon*>& cannons, string& player_name, sf::Vector2f spawn_point) {

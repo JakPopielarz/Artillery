@@ -7,6 +7,7 @@
 #include "EndScreen.h"
 #include "InGameUI.h"
 #include "Menu.h"
+#include "Help.h"
 
 using namespace std;
 
@@ -25,7 +26,7 @@ sf::Vector2f generate_spawn_point_on(Terrain terrain) {
 }
 
 float generate_wind() {
-    return float(rand() % ((2*MAX_WIND_STRENGTH + 1) - MAX_WIND_STRENGTH));
+    return 0;//float(rand() % ((2*MAX_WIND_STRENGTH + 1) - MAX_WIND_STRENGTH));
 }
 
 bool check_if_round_in_progress(bool missile_flying, vector<Cannon*>* cannons) {
@@ -42,7 +43,7 @@ void check_cannon_events(sf::Event& event, Cannon* cannon, Terrain* terrain, Mis
     else if (event.key.code == sf::Keyboard::Down)
         cannon->rotate_barrel(side("down"));
     else if (event.key.code == sf::Keyboard::Space) {
-        map<string, sf::Vector2f> parameters = cannon->shoot(wind_strength);
+        map<string, sf::Vector2f> parameters = cannon->get_missile_params(wind_strength);
         missile->set_parameters(parameters, sf::Color::Black);
     } else if (event.key.code == sf::Keyboard::A)
         cannon->change_shot_strength(SHOT_STRENGTH_DELTA);
@@ -51,33 +52,43 @@ void check_cannon_events(sf::Event& event, Cannon* cannon, Terrain* terrain, Mis
 }
 
 bool cannon_hit(Cannon* cannon, Missile* missile) {
-    return (cannon->in_explosion(missile->get_position(), missile->get_radius() * 10));
+    return (cannon->in_explosion(missile->get_position(), missile->get_explosion_radius()));
 }
 
-void handle_cannon_hit(sf::RenderWindow &window, vector<Cannon *> &cannons, int i, Missile *missile, Terrain *terrain) {
+void handle_cannon_destruction(vector<Cannon *> &cannons, int &i, sf::RenderWindow & window, Terrain *terrain) {
+    Cannon* cannon = cannons[i];
+    map<string, sf::Vector2f> parameters = cannon->get_destruction_params();
+
+    auto* phantom = new Missile(parameters, sf::Color::Transparent);
+    phantom->explode(window);
+    terrain->destroy(phantom->get_position(), phantom->get_explosion_radius());
+
+    int j = 0;
+    while (j < cannons.size()) {
+        if (cannons[j]->in_explosion(phantom->get_position(), phantom->get_explosion_radius()))
+            cannons[j]->lower_hp(int(phantom->get_radius()*8));
+
+        j += 1;
+    }
+
+    delete phantom;
+
+    cannons.erase(cannons.begin() + i);
+}
+
+void handle_cannon_hit(sf::RenderWindow &window, vector<Cannon *> &cannons, int i, Missile *missile) {
     Cannon* cannon = cannons[i];
     cannon->lower_hp(int(missile->get_radius() * 8));
-
-    if (cannon->get_hp() <= 0 and cannon->get_position().x >= 0) {
-        map<string, sf::Vector2f> parameters = cannon->destroy();
-
-        auto* phantom = new Missile(parameters, sf::Color::Transparent);
-        phantom->explode(window);
-        terrain->destroy(phantom->get_position(), phantom->get_radius() * 10);
-        delete phantom;
-
-        cannons.erase(cannons.begin() + i);
-    }
 }
 
-void handle_destruction(sf::RenderWindow &window, vector<Cannon *> &cannons, Missile *missile, Terrain *terrain) {
+void handle_explosion(sf::RenderWindow &window, vector<Cannon *> &cannons, Missile *missile, Terrain *terrain) {
     missile->explode(window);
     terrain->destroy(missile->get_position(), missile->get_radius() * 10);
 
     int i = 0;
     while (i < cannons.size()) {
         if (cannon_hit(cannons[i], missile))
-            handle_cannon_hit(window, cannons, i, missile, terrain);
+            handle_cannon_hit(window, cannons, i, missile);
         if (cannons[i]->out_of_screen())
             cannons.erase(cannons.begin() + i);
         i += 1;
@@ -92,7 +103,7 @@ void new_round(Missile* missile, float* wind_strength, int* turn, vector<Cannon*
         *turn = 0;
 }
 
-void run_game(sf::RenderWindow& window, vector<Cannon*>& cannons, int& turn, float& wind_strength, Terrain& terrain, Missile& missile) {
+void run_game(sf::RenderWindow& window, vector<Cannon*>& cannons, int& turn, float& wind_strength, Terrain& terrain, Missile& missile, Help& help) {
     Cannon* cannon;
     if (cannons.size() > 1) {
         cannon = cannons[turn];
@@ -101,6 +112,7 @@ void run_game(sf::RenderWindow& window, vector<Cannon*>& cannons, int& turn, flo
         window.clear(BACKGROUND_COLOR);
         terrain.draw(window);
         UI.draw(window);
+        help.draw(window);
 
         for (auto i: cannons) {
             if (!i->is_on(terrain) && i->get_hp() > 0)
@@ -113,11 +125,20 @@ void run_game(sf::RenderWindow& window, vector<Cannon*>& cannons, int& turn, flo
             missile.move_over(terrain, cannons);
 
             if (!missile.flying) {
-                handle_destruction(window, cannons, &missile, &terrain);
+                handle_explosion(window, cannons, &missile, &terrain);
 
                 new_round(&missile, &wind_strength, &turn, &cannons);
             }
         }
+
+        int i = 0;
+        while (i < cannons.size()) {
+            if (cannons[i]->get_hp() <= 0)
+                handle_cannon_destruction(cannons, i, window, &terrain);
+            else
+                i += 1;
+        }
+
     } else if (cannons.size() == 1) {
         Cannon* winner = cannons[0];
         EndScreen end(winner->name, winner->get_color());
@@ -142,6 +163,7 @@ int main() {
     Missile missile;
 
     Menu menu;
+    Help help;
 
     bool round_in_progress = false;
     bool game_started = false;
@@ -182,15 +204,17 @@ int main() {
                     }
                 }
 
+            } else if (event.type == sf::Event::KeyPressed && game_started && event.key.code == sf::Keyboard::H) {
+                help.switch_display();
             } else if (event.type == sf::Event::KeyPressed && game_started && round_in_progress) {
                 cannon = cannons[turn];
                 check_cannon_events(event, cannon, &terrain, &missile, &wind_strength);
             }
         }
 
-        if (game_started)
-            run_game(window, cannons, turn, wind_strength, terrain, missile);
-        else {
+        if (game_started) {
+            run_game(window, cannons, turn, wind_strength, terrain, missile, help);
+        } else {
             window.clear(BACKGROUND_COLOR);
             menu.draw(window);
         }

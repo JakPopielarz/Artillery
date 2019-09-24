@@ -25,11 +25,27 @@ const float BARREL_MAX_ROTATION = 360;
 const float SHOT_STRENGTH_DELTA = 2.5f;
 const float MAX_SHOT_STRENGTH = 15;
 const float MISSILE_EXPLOSION_INCREMENT = 0.15;
+const float DEFAULT_EXPLOSION_COEFFICIENT = 10;
 
 const float WIND_ARROW_WIDTH = 3;
 const sf::Vector2f WIND_TEXT_POSITION = sf::Vector2f(WINDOW_WIDTH/2.f, WINDOW_MARGIN);
 const unsigned int WIND_CHAR_SIZE = 10;
 const int MAX_WIND_STRENGTH = 10;
 const float WIND_IMPACT_ON_FLIGHT = 0.0015;
+
+const unsigned int HELP_CHARACTER_SIZE = 14;
+
+const std::string CONTROLS_STRING =
+        "CONTROLS\n\n"
+        "left and right arrow\n"
+        "move\n\n"
+        "up and down arrow\n"
+        "rotate barrel\n\n"
+        "a and z\n"
+        "adjust shot strength\n\n"
+        "space\n"
+        "shoot\n\n"
+        "h\n"
+        "display/hide this text in-game\n\n";
 
 #endif //ARTILLERY_CONSTANTS_H
